@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,8 +13,22 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::view('/login', 'auth.login')->name('login');
+Route::post('/login', function (Request $request){
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
+    $credentials = $request->only(['email', 'password']);
+    if (Auth::attempt($credentials)) {
+        return redirect()->intended('/');
+    }
+    return redirect()->back()->withInput($request->only('email'))->withErrors([
+        'email' => 'These credentials do not match our records.'
+    ]);
+});
 
-Route::name('books.')->controller(\App\Http\Controllers\BookController::class)->group(function () {
+Route::name('books.')->middleware('auth')->controller(\App\Http\Controllers\BookController::class)->group(function () {
     Route::get('/', 'index')->name('index');
     Route::post('/', 'store')->name('store');
     Route::delete('/{book}', 'destroy')->name('destroy')->whereNumber('book');
@@ -27,7 +42,7 @@ Route::name('books.')->controller(\App\Http\Controllers\BookController::class)->
     });
 });
 
-Route::prefix('phrases')->name('phrases.')->controller(\App\Http\Controllers\PhraseController::class)->group(function () {
+Route::prefix('phrases')->middleware('auth')->name('phrases.')->controller(\App\Http\Controllers\PhraseController::class)->group(function () {
     Route::get('/', 'index')->name('index');
     Route::get('/{phrase}', 'edit')->name('edit');
     Route::put('/{phrase}', 'update')->name('update');
