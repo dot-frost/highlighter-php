@@ -25,7 +25,7 @@
                 </div>
                 <div class="mb-4">
                     <label class="font-bold text-grey-800 block mb-2">Password</label>
-                    <input type="text" name="password"
+                    <input type="password" name="password"
                            class="block appearance-none w-full bg-white border border-grey-400 hover:border-gray-500 px-2 py-2 rounded shadow"
                            placeholder="Your Password">
                 </div>
