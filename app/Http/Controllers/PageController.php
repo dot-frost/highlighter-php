@@ -8,6 +8,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Stichoza\GoogleTranslate\GoogleTranslate;
+use thiagoalessio\TesseractOCR\TesseractOCR;
 
 class PageController extends Controller
 {
@@ -76,8 +77,10 @@ class PageController extends Controller
             'image' => ['nullable','image']
         ]);
         if ($request->hasFile('image')) {
-            exec("tesseract {$request->image->path()} /tmp/output -l eng");
-            $text = Str::of(file_get_contents('/tmp/output.txt'))->replace(["\n", "\f"], '')->trim()->value();
+            $imagePath = $request->image->path();
+            $tesseract = new TesseractOCR($imagePath);
+            $tesseract->lang(env('TESSERACT_LANG'));
+            $text = $tesseract->run();
         }
         $highlights = json_decode($validated['highlights'] ?: '[]',true);
         $page->update([
