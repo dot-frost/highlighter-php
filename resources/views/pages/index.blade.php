@@ -10,7 +10,7 @@
                     <span>Number</span>
                     <input type="text" placeholder="Page Number" name="number"
                            @class(['input input-bordered input-sm w-full'=> true, 'input-error' => $errors->has('number')])
-                           value="{{ old('number', (int)$book->pages->sortByDesc('number')->first()?->page_number + 1) }}">
+                           value="{{ old('number', (int)$book->pages->sortByDesc('number')->first()?->number + 1) }}">
                 </label>
                 @error('number')
                 <label class="label">

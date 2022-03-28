@@ -56,7 +56,7 @@ class Page extends Model
 
     public function storeImage(UploadedFile $image): void
     {
-        $image->storeAs($this->book->path . '/pages', $this->imageName, ['disk' => 'public']);
+        $image->storeAs($this->book->path . '/pages', "{$this->imageName}.{$image->extension()}", ['disk' => 'public']);
     }
 
     public function book(): \Illuminate\Database\Eloquent\Relations\BelongsTo
