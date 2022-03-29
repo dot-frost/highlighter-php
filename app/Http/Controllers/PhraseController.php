@@ -79,7 +79,12 @@ class PhraseController extends Controller
         }, $page->highlights);
         $page->save();
 
-        return response()->json($page->highlights);
+        return redirect()->route('phrases.edit', $phrase)->with([
+            'alert' => [
+                'type' => 'success',
+                'message' => 'Phrase has been created.',
+            ],
+        ]);
     }
 
     public function edit(Phrase $phrase){
