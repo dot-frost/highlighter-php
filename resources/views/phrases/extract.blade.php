@@ -1,58 +1,53 @@
 @extends('layout')
 @section('content')
-    <div class="min-h-screen">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-6 px-3 py-3 gap-3">
+    <div class="min-h-screen w-full p-3">
+        <table class="table w-full">
+            <!-- head -->
+            <thead>
+            <tr>
+                <th>Text</th>
+                <th>Meaning</th>
+                <th>Options</th>
+                <th>Examples</th>
+                <th class="print:hidden">Voices</th>
+            </tr>
+            </thead>
+            <tbody>
             @foreach($phrases as $phrase)
-                <div class="col-span-1 card card-side bg-base-100 shadow-xl">
-                    <div class="card-body">
-                        <h2 class="card-title">{{ $phrase->phrase }}</h2>
-                        <div class="divider">Meaning</div>
-                        <div class="flex flex-col items-stretch">
-                            @foreach($phrase->information['meaning'] as $lang => $mean)
-                                <div class="">
-                                    <h2>{{ strtoupper($lang) }}:</h2>
-                                    <p>
-                                        {{ $mean }}
-                                    </p>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="divider">Options</div>
-                        <div class="flex flex-wrap">
-                            @foreach($phrase->information['options'] as $option => $value)
-                                <div class="flex justify-start">
-                                    <h2>{{ strtoupper($option) }}:</h2>
-                                    <p>
-                                        {{ $value }}
-                                    </p>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="divider">Examples</div>
-                        <div class="flex flex-wrap">
-                            @foreach($phrase->information['examples'] as $example => $mean)
-                                <div class="flex justify-start">
-                                    <h2 class="flex-grow">{{ $example }}</h2>
-                                    <p>
-                                        {{ $mean }}
-                                    </p>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="divider">Voices</div>
-                        <div class="flex flex-wrap">
-                            @foreach($phrase->information['voices'] as $voice => $link)
-                                <div class="flex justify-start">
-                                    <h2 class="flex-grow">{{ $voice }}</h2>
-                                    <p>
-                                        {{ $link }}
-                                    </p>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
+                <tr>
+                    <td>
+                        <span>{{ $phrase->phrase }}</span>
+                    </td>
+                    <td>
+                        @foreach($phrase->information['meaning'] as $language => $meaning)
+                            {{ Str::upper($language) }}: <span>{{ $meaning }}</span><br/>
+                        @endforeach
+                    </td>
+                    <td>
+                        @foreach($phrase->information['options'] as $option => $value)
+                            <span class="badge badge-info">{{ Str::studly($option) }}: {{ $value }}</span><br/>
+                        @endforeach
+                    </td>
+                    <th>
+                        @foreach($phrase->information['examples'] as $example => $meaning)
+                            <span>{{ $example }}</span>
+                            <br>
+                            <span class="badge badge-ghost badge-md">Meaning: {{ $meaning }}</span>
+                            <div class="divider m-0"></div>
+                        @endforeach
+                    </th>
+                    <td class="print:hidden">
+                        @foreach($phrase->information['voices'] as $voice => $value)
+                            <span class="badge badge-info">{{ Str::upper($voice) }}: {{ $value }}</span><br/>
+                        @endforeach
+                    </td>
+                </tr>
             @endforeach
-        </div>
+            </tbody>
+            <!-- foot -->
+            <tfoot>
+            </tfoot>
+
+</table>
     </div>
 @endsection
