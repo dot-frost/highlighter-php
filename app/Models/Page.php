@@ -18,7 +18,6 @@ class Page extends Model
     ];
 
     protected $casts = [
-        'number' => 'integer',
         'highlights' => 'json',
     ];
     protected static function boot()
