@@ -25,7 +25,7 @@ class Page extends Model
         parent::boot();
 
         static::deleting(function ($page) {
-            Storage::disk('public')->delete($page->imagePath);
+            $page->imagePath && Storage::disk('public')->delete($page->imagePath);
         });
     }
 
@@ -36,8 +36,7 @@ class Page extends Model
 
     protected function imagePath(): Attribute
     {
-        $page = $this;
-        return Attribute::get(function ()use($page) {
+        return Attribute::get(function () {
             foreach (['jpg', 'jpeg', 'png', 'gif'] as $extension) {
                 $path = "{$this->book->path}/pages/{$this->imageName}.{$extension}";
                 if (Storage::disk('public')->exists($path)) {
