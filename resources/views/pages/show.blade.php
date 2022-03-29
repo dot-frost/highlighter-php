@@ -30,7 +30,7 @@
                     <button type="button" class="btn btn-outline btn-primary btn-active" id="highlight-tool">
                         <i class="fas fa-highlighter"></i>
                     </button>
-                    <button type="button" class="btn btn-outline btn-success">
+                    <button type="button" class="btn btn-outline btn-success hidden">
                         <i class="fas fa-note-sticky"></i>
                     </button>
                 </div>
