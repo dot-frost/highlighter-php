@@ -87,8 +87,76 @@ class PhraseController extends Controller
         ]);
     }
 
+    public function update(Request $request, Phrase $phrase){
+        $request->validate([
+            'text' => 'required|string',
+            'meaning' => 'required|array',
+            'options-name' => ['required_with:options-value','array'],
+            'options-name.*' => ['required_with:options-value.*','string'],
+            'options-value' => ['required_with:options-name.*','array'],
+            'options-value.*' => ['required_with:options-name.*','string'],
+            'examples-text' => ['required_with:examples-meaning','array'],
+            'examples-text.*' => ['required_with:examples-meaning.*','string'],
+            'examples-meaning' => ['required_with:examples-text.*','array'],
+            'examples-meaning.*' => ['required_with:examples-text.*','string'],
+            'voices-name' => ['required_with:voices-link','array'],
+            'voices-name.*' => ['required_with:voices-link.*','string'],
+            'voices-link' => ['required_with:voices-name.*','array'],
+            'voices-link.*' => ['required_with:voices-name.*','string'],
+        ]);
+
+        $phrase->phrase = $request->text;
+
+        $options = [];
+        foreach ($request->get('options-name', []) as $index => $option) {
+            $options[$option] = $request->get('options-value', [])[$index];
+        }
+        $examples = [];
+        foreach ($request->get('examples-text', []) as $index => $example) {
+            $examples[$example] = $request->get('examples-meaning', [])[$index];
+        }
+        $voices = [];
+        foreach ($request->get('voices-name', []) as $index => $voice) {
+            $voices[$voice] = $request->get('voices-link', [])[$index];
+        }
+        $phrase->information = [
+            'meaning' => $request->meaning,
+            'options' => $options,
+            'examples' => $examples,
+            'voices' => $voices,
+        ];
+        $phrase->save();
+        return back()->with([
+            'alert' => [
+                'type' => 'success',
+                'message' => 'Phrase updated successfully',
+            ],
+        ]);
+    }
+
     public function edit(Phrase $phrase){
-        return view('phrases.edit', compact('phrase'));
+        $text = $phrase->phrase;
+        $meaning = $phrase->information['meaning'];
+        $options = $phrase->information['options'];
+        $optionsName = old('options-name', array_keys($options));
+        $optionsValue = old('options-value', array_values($options));
+        $options = array_combine($optionsName, $optionsValue);
+        $examples = $phrase->information['examples'];
+        $examplesText = old('examples-text', array_keys($examples));
+        $examplesMeaning = old('examples-meaning', array_values($examples));
+        $examples = array_combine($examplesText, $examplesMeaning);
+        $voices = $phrase->information['voices'];
+        $voicesName = old('voices-name', array_keys($voices));
+        $voicesLink = old('voices-link', array_values($voices));
+        $voices = array_combine($voicesName, $voicesLink);
+        return view('phrases.edit')->with([
+            'phrase' => $phrase,
+            'text' => $text,
+            'meaning' => $meaning,
+            'options' => $options,
+            'examples' => $examples,
+            'voices' => $voices,
+        ]);
     }
 
     public function extract(Request $request){

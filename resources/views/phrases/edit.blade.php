@@ -1,7 +1,7 @@
 @extends('layout')
 @section('title', "$phrase->phrase")
 @section('content')
-    <form class="container min-h-screen p-2 space-y-2" method="post" action="{{ route('phrases.update', $phrase) }}" onsubmit="event.preventDefault()">
+    <form class="container min-h-screen p-2 space-y-2" method="post" action="{{ route('phrases.update', $phrase) }}">
         @csrf
         @method('PUT')
         <div class="flex flex-col justify-items-stretch gap-2">
@@ -14,28 +14,28 @@
                         </button>
                     </label>
                 </label>
-                <textarea name="text" id="text" class="textarea" rows="1">{{ $phrase->phrase }}</textarea>
+                <textarea name="text" id="text" class="textarea" rows="1">{{ old('text', $phrase->phrase) }}</textarea>
             </div>
             <div class="form-control">
                 <label class="label-text" for="meaning">Meaning Persian:</label>
-                <textarea name="meaning[fa]" id="meaning-fa" class="textarea" rows="1">{{ old('meaning-fa', $phrase->information['meaning']['fa']) }}</textarea>
+                <textarea name="meaning[fa]" id="meaning-fa" class="textarea" rows="1">{{ old('meaning-fa', $meaning['fa']) }}</textarea>
             </div>
             <div class="form-control">
                 <label class="label-text" for="meaning">Meaning English:</label>
-                <textarea name="meaning[en]" id="meaning-en" class="textarea" rows="1">{{ old('meaning-en', $phrase->information['meaning']['en']) }}</textarea>
+                <textarea name="meaning[en]" id="meaning-en" class="textarea" rows="1">{{ old('meaning-en', $meaning['en']) }}</textarea>
             </div>
         </div>
         <div class="w-full btn-group">
             <button type="button" class="btn btn-primary" onclick="openTranslateText('google','en')">Google: EN</button>
             <button type="button" class="btn btn-primary" onclick="openTranslateText('google','fa')">Google: FA</button>
         </div>
-        <div class="w-full btn-group hidden">
+        <div class="w-full btn-group">
             <button type="button" class="btn btn-success" onclick="addOption()">Add Option</button>
             <button type="button" class="btn btn-info" onclick="addExample()">Add Example</button>
             <button type="button" class="btn btn-warning" onclick="addVoice()">Add Voice</button>
         </div>
         <div class="flex flex-col items-stretch gap-1 bg-gray-400 rounded-lg p-3" id="informations">
-            @foreach($phrase->information['options'] as $option => $value)
+            @foreach($options as $option => $value)
                 <div class="flex gap-2 pb-2 border-b-2 border-b-gray-700">
                     <div class="input-group flex-grow">
                         <select class="select w-1/4" name="options-name[]" required>
@@ -50,7 +50,7 @@
                     </button>
                 </div>
             @endforeach
-            @foreach($phrase->information['examples'] as $example => $meaning)
+            @foreach($examples as $example => $meaning)
                 <div class="flex gap-2 pb-2 items-center border-b-2 border-b-gray-700">
                     <div class="flex-grow">
                         <input type="text" class="input w-full" name="examples-text[]" placeholder="Example" required value="{{ $example }}">
@@ -62,7 +62,7 @@
                     </button>
                 </div>
             @endforeach
-            @foreach($phrase->information['voices'] as $voice => $link)
+            @foreach($voices as $voice => $link)
                 <div class="flex gap-2 pb-2 border-b-2 border-b-gray-700">
                     <div class="input-group flex-grow">
                         <select class="select w-1/4" name="voices-name[]" required>
@@ -78,7 +78,7 @@
                 </div>
             @endforeach
         </div>
-        <button type="submit" class="btn btn-outline btn-wide gap-2 mx-auto hidden">
+        <button type="submit" class="btn btn-outline btn-wide gap-2 mx-auto">
             Save
             <i class="fas fa-save"></i>
         </button>
@@ -169,7 +169,6 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             (function ($) {
-                translateText()
             })(window.jQuery)
         })
 
