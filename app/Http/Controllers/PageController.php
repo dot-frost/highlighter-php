@@ -17,13 +17,17 @@ class PageController extends Controller
         if ($book->pages->count() === 0) {
             if (\Storage::disk('public')->exists($book->path .'/pages')) {
                 $pages = \Storage::disk('public')->files($book->path .'/pages');
+
                 foreach ($pages as $page) {
+                    $image = Str::afterLast($page, '/');
+                    $imageName = Str::beforeLast($image, '.');
                     $book->pages()->create([
-                       'number' => (int)Str::beforeLast($page, '.'),
+                       'number' => $imageName
                     ]);
                 }
             }
         }
+
         return view('pages.index')->with([
             'book' => $book,
         ]);
