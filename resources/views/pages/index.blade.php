@@ -40,7 +40,7 @@
                 @error('pages')
                 {{ $message }}
                 @enderror
-                @foreach($pages = $book->pages as $page)
+                @foreach($pages = $book->pages->sortBy('number') as $page)
                     <input hidden type="checkbox" id="page_{{ $page->id }}" name="pages[]" value="{{ $page->id }}">
                 @endforeach
                 <button class="btn" type="submit">Extract</button>
