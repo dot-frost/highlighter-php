@@ -49,7 +49,10 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2">
             @foreach($pages as $page)
                 <div class="card bg-base-100 shadow-xl">
-                    <input type="checkbox" class="checkbox m-1" oninput="$('#page_{{ $page->id }}').attr('checked', event.target.checked)">
+                    <div class="flex items-center">
+                        <input type="checkbox" class="checkbox m-1" style="" oninput="$('#page_{{ $page->id }}').attr('checked', event.target.checked)">
+                        <span class="p-3">{{ $page->number }}</span>
+                    </div>
                     <figure><img class="aspect-square" src="{{ $page->imageUrl }}"  alt="{{ $page->page_number }}"/></figure>
                     <div class="card-body">
                         <div class="card-actions justify-center flex-nowrap">
