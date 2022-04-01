@@ -84,7 +84,11 @@ class PageController extends Controller
             $imagePath = $request->image->path();
             $tesseract = new TesseractOCR($imagePath);
             $tesseract->lang(env('TESSERACT_LANG'));
-            $text = $tesseract->run();
+            try {
+                $text = $tesseract->run();
+            }catch (\Exception $exception){
+                $text = '';
+            }
         }
         $highlights = json_decode($validated['highlights'] ?: '[]',true);
         $page->update([
