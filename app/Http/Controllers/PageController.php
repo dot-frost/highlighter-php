@@ -105,7 +105,7 @@ class PageController extends Controller
     {
         $validator = validator($request->all(), [
             'highlights' => ['required', 'json'],
-            'text' => ['required', 'string'],
+            'text' => ['nullable', 'string'],
             'languages' => ['required', 'array'],
             'languages.fa' => ['required', 'boolean'],
             'languages.en' => ['required', 'boolean'],
