@@ -52,6 +52,27 @@ class Page extends Model
         return Attribute::get(fn() => \Storage::url($this->imagePath));
     }
 
+    protected function imageThumbnail300Path(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!$this->imagePath) return null;
+            $thumpPath = "{$this->book->path}/pages/thumbnail-300/{$this->imageName}.jpg";
+            $publicDisk = Storage::disk('public');
+            if (!$publicDisk->exists($thumpPath)) {
+                $image = imagecreatefromstring($publicDisk->get($this->imagePath));
+                $imageThumb = imagescale($image, 300);
+                $publicDisk->put($thumpPath, '');
+                imagejpeg($imageThumb, $publicDisk->path($thumpPath));
+            }
+            return $thumpPath;
+        });
+    }
+
+    protected function imageThumbnail300Url(): Attribute
+    {
+        return Attribute::get(fn() => \Storage::disk('public')->url($this->imageThumbnail300Path));
+    }
+
     public function storeImage(UploadedFile $image): void
     {
         $image->storeAs($this->book->path . '/pages', "{$this->imageName}.{$image->extension()}", ['disk' => 'public']);

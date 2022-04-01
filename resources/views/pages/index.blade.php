@@ -53,7 +53,7 @@
                         <input type="checkbox" class="checkbox m-1" style="" oninput="$('#page_{{ $page->id }}').attr('checked', event.target.checked)">
                         <span class="p-3">{{ $page->number }}</span>
                     </div>
-                    <figure><img class="aspect-square" src="{{ $page->imageUrl }}"  alt="{{ $page->page_number }}"/></figure>
+                    <figure><img class="aspect-square" src="{{ $page->imageThumbnail300Url }}"  alt="{{ $page->page_number }}"/></figure>
                     <div class="card-body">
                         <div class="card-actions justify-center flex-nowrap">
                             <a role="button" href="{{ route('books.pages.show', [$book, $page]) }}" class="btn btn-primary">Show</a>
