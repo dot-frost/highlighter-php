@@ -120,7 +120,7 @@ class PageController extends Controller
         }
         $validated = $validator->validated();
 
-        return view('pages.last-text')->with([
+        return view('phrases.create')->with([
             'book' => $book,
             'page' => $page,
             'text' => $validated['text'],

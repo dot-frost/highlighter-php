@@ -49,6 +49,10 @@
                 <select class="select w-1/4" name="options-name[]" required>
                     <option value="type">Type</option>
                     <option value="gender">Gender</option>
+                    <option value="plural">Plural</option>
+                    <option value="past">Past</option>
+                    <option value="participle">Participle</option>
+                    <option value="case">Case</option>
                 </select>
                 <div class="divider divider-horizontal m-0"></div>
                 <input type="text" class="input w-full" name="options-value[]" placeholder="Option Value" required>
@@ -62,8 +66,9 @@
         <div class="flex gap-2 pb-2 border-b-2 border-b-gray-700">
             <div class="input-group flex-grow">
                 <select class="select w-1/4" name="voices-name[]" required>
-                    <option value="type">Type</option>
-                    <option value="gender">Gender</option>
+                    <option value="google">Google</option>
+                    <option value="duden">Duden</option>
+                    <option value="collins">Collins</option>
                 </select>
                 <div class="divider divider-horizontal m-0"></div>
                 <input type="text" class="input w-full" name="voices-link[]" placeholder="Voice Link" required>
