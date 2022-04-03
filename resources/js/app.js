@@ -495,6 +495,7 @@ class Editor {
 
 const canvas = document.getElementById('canvas');
 const image = document.getElementById('img');
+image.addEventListener('load', () => window.dispatchEvent(new Event('event')))
 const color = $('#highlight-tool-color')
 const opacity = $('#highlight-tool-opacity');
 color.spectrum({
