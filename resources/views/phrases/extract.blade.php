@@ -9,6 +9,7 @@
                 <th>Meaning</th>
                 <th>Options</th>
                 <th>Examples</th>
+                <th class="print:hidden">Exercise</th>
                 <th class="print:hidden">Voices</th>
             </tr>
             </thead>
@@ -35,6 +36,9 @@
                             <span class="badge badge-ghost badge-md">Meaning: {{ $meaning }}</span>
                             <div class="divider m-0"></div>
                         @endforeach
+                    </th>
+                    <th class="print:hidden">
+                        <span class="badge badge-ghost badge-md">{{ $phrase->information['exercise'] }}</span>
                     </th>
                     <td class="print:hidden">
                         @foreach($phrase->information['voices'] as $voice => $value)
