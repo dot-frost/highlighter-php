@@ -25,6 +25,10 @@
                 <label class="label-text" for="meaning">Meaning English:</label>
                 <textarea name="meaning[en]" id="meaning-en" class="textarea" rows="1">{{ $translated['en'] }}</textarea>
             </div>
+            <div class="form-control">
+                <label class="label-text" for="exercise">Exercise:</label>
+                <input type="text" name="exercise" id="exercise" class="input" value="{{old('exercise')}}">
+            </div>
         </div>
         <div class="w-full btn-group">
             <button type="button" class="btn btn-primary" onclick="openTranslateText('google','en')">Google: EN</button>

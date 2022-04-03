@@ -28,6 +28,7 @@ class PhraseController extends Controller
             'voices-name.*' => ['required_with:voices-link.*','string'],
             'voices-link' => ['required_with:voices-name.*','array'],
             'voices-link.*' => ['required_with:voices-name.*','string'],
+            'exercise' => ['nullable'],
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -53,6 +54,7 @@ class PhraseController extends Controller
             'options' => $options,
             'examples' => $examples,
             'voices' => $voices,
+            'exercise' => $request->exercise,
         ];
         $phrase->page_id = $page->id;
         $phrase->book_id = $page->book_id;
@@ -124,6 +126,7 @@ class PhraseController extends Controller
             'options' => $options,
             'examples' => $examples,
             'voices' => $voices,
+            'exercise' => $request->exercise,
         ];
         $phrase->save();
         return back()->with([
@@ -156,6 +159,7 @@ class PhraseController extends Controller
             'options' => $options,
             'examples' => $examples,
             'voices' => $voices,
+            'exercise' => $phrase->information['exercise'] ?? null,
         ]);
     }
 
