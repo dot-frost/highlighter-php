@@ -12,20 +12,28 @@ class Page extends Model
 {
     use HasFactory;
 
+    const STATUS_INITIAL = 'INITIAL';
+    const STATUS_PENDING = 'PENDING';
+    CONST STATUS_DONE = 'DONE';
+    const STATUS_APPROVED = 'APPROVED';
+
     protected $fillable = [
         'number',
-        'highlights'
+        'highlights',
+        'status',
     ];
 
     protected $casts = [
         'highlights' => 'json',
     ];
+
     protected static function boot()
     {
         parent::boot();
 
         static::deleting(function ($page) {
             $page->imagePath && Storage::disk('public')->delete($page->imagePath);
+            $page->imageThumbnail300Path && Storage::disk('public')->delete($page->imageThumbnail300Path);
         });
     }
 

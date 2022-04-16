@@ -44342,7 +44342,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
             if (opts.palette) {
                 palette = opts.palette.slice(0);
-                paletteArray = $.isArray(palette[0]) ? palette : [palette];
+                paletteArray = Array.isArray(palette[0]) ? palette : [palette];
                 paletteLookup = {};
                 for (var i = 0; i < paletteArray.length; i++) {
                     for (var j = 0; j < paletteArray[i].length; j++) {
@@ -44443,15 +44443,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             }
 
             // Prevent clicks from bubbling up to document.  This would cause it to be hidden.
-            container.click(stopPropagation);
+            container.on("click", stopPropagation);
 
             // Handle user typed input
             [textInput, boundElement].forEach(function(input) {
-                input.change(function() { setFromTextInput(input.val()); });
+                input.on("change", function() { setFromTextInput(input.val()); });
                 input.on("paste", function () {
                     setTimeout(function() { setFromTextInput(input.val()); }, 1);
                 });
-                input.keydown(function (e) { if (e.keyCode == 13) {
+                input.on("keydown", function (e) { if (e.keyCode == 13) {
                     setFromTextInput($(input).val());
                     if (input == boundElement) hide();
                 } });

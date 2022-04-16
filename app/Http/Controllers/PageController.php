@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BookResource;
+use App\Http\Resources\PageResource;
 use App\Models\Book;
 use App\Models\Page;
+use App\Models\User;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Schema\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Spatie\Permission\Models\Permission;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 
@@ -25,11 +33,26 @@ class PageController extends Controller
                        'number' => $imageName
                     ]);
                 }
+
+                if (count($pages) > 0) {
+                    $book->refresh();
+                }
             }
         }
-
-        return view('pages.index')->with([
-            'book' => $book,
+//        $book->load('pages');
+//        $pages = new Collection();
+//        foreach ($book->pages as $page) {
+//            if (auth()->user()->can('pages.read', $page)) {
+//                $pages->push($page);
+//            }
+//        }
+//        $book->unsetRelation('pages');
+        return Inertia::render('Pages/Index')->with([
+            'book' => BookResource::make($book),
+//            'pages' => PageResource::collection($pages),
+            'users' => User::whereNot('email', 'admin@admin.com')->with(['permissions' => function ($query) {
+                $query->select('name');
+            }])->get()
         ]);
     }
 
@@ -56,9 +79,11 @@ class PageController extends Controller
 
     public function show(Book $book, Page $page)
     {
-        return view('pages.show')->with([
-            'book' => $book,
-            'page' => $page,
+        return Inertia::render('Pages/Show')->with([
+            'book' => BookResource::make($book),
+            'next' => $page->next?PageResource::make($page->next):null,
+            'previous' => $page->previous?PageResource::make($page->previous):null,
+            'page' => PageResource::make($page),
         ]);
     }
 
@@ -91,6 +116,18 @@ class PageController extends Controller
             }
         }
         $highlights = json_decode($validated['highlights'] ?: '[]',true);
+        $oldHighlights = collect($page->highlights);
+        $highlights = array_map(function ($highlight) use ($oldHighlights) {
+            $oldHighlight = $oldHighlights
+                ->where('position', $highlight['position'])
+                ->where('size', $highlight['size'])
+                ->first();
+
+            if ($oldHighlight && isset($oldHighlight['data']['phrase_id'])) {
+                $highlight['data']['phrase_id'] = $oldHighlight['data']['phrase_id'];
+            }
+            return $highlight;
+        }, $highlights);
         $page->update([
             'highlights' => $highlights
         ]);
@@ -120,9 +157,9 @@ class PageController extends Controller
         }
         $validated = $validator->validated();
 
-        return view('phrases.create')->with([
-            'book' => $book,
-            'page' => $page,
+        return Inertia::render('Phrases/Create')->with([
+            'book' => BookResource::make($book),
+            'page' => PageResource::make($page),
             'text' => $validated['text'],
             'languages' => $validated['languages'],
             'highlights' => $validated['highlights'],
@@ -130,6 +167,26 @@ class PageController extends Controller
                 'fa' => '' ?? GoogleTranslate::trans($validated['text'], 'fa'),
                 'en' => '' ?? GoogleTranslate::trans($validated['text'], 'en')
             ]
+        ]);
+    }
+
+    public function setStatus($book, Page $page, Request $request){
+        $request->validate([
+           'status' => ['required', Rule::in([
+               Page::STATUS_INITIAL,
+               Page::STATUS_PENDING,
+               Page::STATUS_DONE,
+               Page::STATUS_APPROVED
+           ])]
+        ]);
+
+        $page->update([
+            'status' => $request->status
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'status' => $page->status
         ]);
     }
 }

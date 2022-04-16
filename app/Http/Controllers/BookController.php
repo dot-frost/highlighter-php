@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BookController extends Controller
 {
     public function index()
     {
-        return view('books.index')->with([
-            'books' => Book::all()
+        return Inertia::render('Books/Index')->with([
+            'books' => BookResource::collection(Book::all())
         ]);
     }
 
