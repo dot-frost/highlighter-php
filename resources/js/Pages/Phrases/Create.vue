@@ -117,7 +117,11 @@ export default {
         return {
             form: createFrom,
             createPhrase:()=>{
-                createFrom.post(route('phrases.store'))
+                createFrom.post(route('phrases.store'), {
+                    onBefore: (form) => {
+                        window.oldData = JSON.stringify(form.data);
+                    },
+                })
             },
             templates: {
                 option: {
@@ -143,10 +147,13 @@ export default {
       form: {
         deep: true,
         handler(form) {
+            if (window.oldData === JSON.stringify(form.data())) {
+                return;
+            }
             window.lastCallCreate && clearTimeout(window.lastCallCreate)
             window.lastCallCreate = setTimeout(() => {
                 this.createPhrase()
-            }, 500)
+            }, 1000)
         }
       }
     },
