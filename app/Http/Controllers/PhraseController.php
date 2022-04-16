@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PageResource;
 use App\Models\Page;
 use App\Models\Phrase;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PhraseController extends Controller
 {
@@ -16,18 +18,16 @@ class PhraseController extends Controller
             'meaning' => 'required|array',
             'highlights' => 'required|json',
             'page_id' => ['required','integer','exists:pages,id'],
-            'options-name' => ['required_with:options-value','array'],
-            'options-name.*' => ['required_with:options-value.*','string'],
-            'options-value' => ['required_with:options-name.*','array'],
-            'options-value.*' => ['required_with:options-name.*','string'],
-            'examples-text' => ['required_with:examples-meaning','array'],
-            'examples-text.*' => ['required_with:examples-meaning.*','string'],
-            'examples-meaning' => ['required_with:examples-text.*','array'],
-            'examples-meaning.*' => ['required_with:examples-text.*','string'],
-            'voices-name' => ['required_with:voices-link','array'],
-            'voices-name.*' => ['required_with:voices-link.*','string'],
-            'voices-link' => ['required_with:voices-name.*','array'],
-            'voices-link.*' => ['required_with:voices-name.*','string'],
+            'options' => 'array',
+            'options.*.name' => 'required|string',
+            'options.*.value' => 'required|string',
+            'examples' => 'array',
+            'examples.*.text' => 'required|string',
+            'examples.*.meaning' => 'required|array',
+            'examples.*.meaning.*' => 'required|string',
+            'voices' => 'array',
+            'voices.*.name' => 'required|string',
+            'voices.*.link' => 'required|string',
             'exercise' => ['nullable'],
         ]);
         if ($validator->fails()) {
@@ -37,18 +37,10 @@ class PhraseController extends Controller
         $phrase = new Phrase();
         $phrase->phrase = $request->text;
 
-        $options = [];
-        foreach ($request->get('options-name', []) as $index => $option) {
-            $options[$option] = $request->get('options-value', [])[$index];
-        }
-        $examples = [];
-        foreach ($request->get('examples-text', []) as $index => $example) {
-            $examples[$example] = $request->get('examples-meaning', [])[$index];
-        }
-        $voices = [];
-        foreach ($request->get('voices-name', []) as $index => $voice) {
-            $voices[$voice] = $request->get('voices-link', [])[$index];
-        }
+        $options = $request['options'] ?: [];
+        $examples = $request['examples'] ?: [];
+        $voices = $request['voices'] ?: [];
+
         $phrase->information = [
             'meaning' => $request->meaning,
             'options' => $options,
@@ -81,51 +73,33 @@ class PhraseController extends Controller
         }, $page->highlights);
         $page->save();
 
-        return redirect()->route('phrases.edit', $phrase)->with([
-            'alert' => [
-                'type' => 'success',
-                'message' => 'Phrase has been created.',
-            ],
-        ]);
+        return redirect()->route('phrases.edit', $phrase);
     }
 
     public function update(Request $request, Phrase $phrase){
         $request->validate([
             'text' => 'required|string',
             'meaning' => 'required|array',
-            'options-name' => ['required_with:options-value','array'],
-            'options-name.*' => ['required_with:options-value.*','string'],
-            'options-value' => ['required_with:options-name.*','array'],
-            'options-value.*' => ['required_with:options-name.*','string'],
-            'examples-text' => ['required_with:examples-meaning','array'],
-            'examples-text.*' => ['required_with:examples-meaning.*','string'],
-            'examples-meaning' => ['required_with:examples-text.*','array'],
-            'examples-meaning.*' => ['required_with:examples-text.*','string'],
-            'voices-name' => ['required_with:voices-link','array'],
-            'voices-name.*' => ['required_with:voices-link.*','string'],
-            'voices-link' => ['required_with:voices-name.*','array'],
-            'voices-link.*' => ['required_with:voices-name.*','string'],
+            'options' => 'array',
+            'options.*.name' => 'required|string',
+            'options.*.value' => 'required|string',
+            'examples' => 'array',
+            'examples.*.text' => 'required|string',
+            'examples.*.meaning' => 'required|array',
+            'examples.*.meaning.*' => 'required|string',
+            'voices' => 'array',
+            'voices.*.name' => 'required|string',
+            'voices.*.link' => 'required|string',
+            'exercise' => ['nullable'],
         ]);
 
         $phrase->phrase = $request->text;
 
-        $options = [];
-        foreach ($request->get('options-name', []) as $index => $option) {
-            $options[$option] = $request->get('options-value', [])[$index];
-        }
-        $examples = [];
-        foreach ($request->get('examples-text', []) as $index => $example) {
-            $examples[$example] = $request->get('examples-meaning', [])[$index];
-        }
-        $voices = [];
-        foreach ($request->get('voices-name', []) as $index => $voice) {
-            $voices[$voice] = $request->get('voices-link', [])[$index];
-        }
         $phrase->information = [
             'meaning' => $request->meaning,
-            'options' => $options,
-            'examples' => $examples,
-            'voices' => $voices,
+            'options' => $request->options,
+            'examples' => $request->examples,
+            'voices' => $request->voices,
             'exercise' => $request->exercise,
         ];
         $phrase->save();
@@ -138,28 +112,8 @@ class PhraseController extends Controller
     }
 
     public function edit(Phrase $phrase){
-        $text = $phrase->phrase;
-        $meaning = $phrase->information['meaning'];
-        $options = $phrase->information['options'];
-        $optionsName = old('options-name', array_keys($options));
-        $optionsValue = old('options-value', array_values($options));
-        $options = array_combine($optionsName, $optionsValue);
-        $examples = $phrase->information['examples'];
-        $examplesText = old('examples-text', array_keys($examples));
-        $examplesMeaning = old('examples-meaning', array_values($examples));
-        $examples = array_combine($examplesText, $examplesMeaning);
-        $voices = $phrase->information['voices'];
-        $voicesName = old('voices-name', array_keys($voices));
-        $voicesLink = old('voices-link', array_values($voices));
-        $voices = array_combine($voicesName, $voicesLink);
-        return view('phrases.edit')->with([
+        return Inertia::render('Phrases/Edit')->with([
             'phrase' => $phrase,
-            'text' => $text,
-            'meaning' => $meaning,
-            'options' => $options,
-            'examples' => $examples,
-            'voices' => $voices,
-            'exercise' => $phrase->information['exercise'] ?? null,
         ]);
     }
 
@@ -175,9 +129,19 @@ class PhraseController extends Controller
         foreach ($pages as $page) {
             $phrases=  $phrases->merge($page->phrases);
         }
-        return view('phrases.extract')->with([
+        return Inertia::render('Phrases/Extract')->with([
             'phrases' => $phrases,
-            'pages' => $pages,
+            'pages' => PageResource::collection($pages),
+        ]);
+    }
+
+    public function destroy(Phrase $phrase){
+        $phrase->delete();
+        return back()->with([
+            'alert' => [
+                'type' => 'success',
+                'message' => 'Phrase deleted successfully',
+            ],
         ]);
     }
 }
