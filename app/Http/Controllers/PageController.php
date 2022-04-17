@@ -29,9 +29,12 @@ class PageController extends Controller
                 foreach ($pages as $page) {
                     $image = Str::afterLast($page, '/');
                     $imageName = Str::beforeLast($image, '.');
+                    $imageExtension = Str::afterLast($image, '.');
+                    $imageName = \Arr::last(preg_split('/[^\d]/', $imageName));
                     $book->pages()->create([
                        'number' => $imageName
                     ]);
+                    \Storage::disk('public')->move($page, $book->path .'/pages/' .$imageName .'.' .$imageExtension);
                 }
 
                 if (count($pages) > 0) {
