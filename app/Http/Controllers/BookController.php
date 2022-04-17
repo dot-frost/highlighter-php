@@ -11,8 +11,24 @@ class BookController extends Controller
 {
     public function index()
     {
+        $books = Book::all();
+        $bookDirectories = \Storage::disk('public')->directories('books');
+        foreach ($bookDirectories as $bookDirectory) {
+            $directoryName = \Str::afterLast($bookDirectory, '/');
+            $book = $books->first(function ($book) use ($directoryName) {
+                return $book->folderName === $directoryName;
+            });
+            if (!$book) {
+                $book = new Book();
+                $book->title = $directoryName;
+                $book->save();
+                \Storage::disk('public')->move($bookDirectory, $book->path);
+                $books->push($book);
+            }
+        }
+        $books = $books->sortByDesc('created_at');
         return Inertia::render('Books/Index')->with([
-            'books' => BookResource::collection(Book::all())
+            'books' => BookResource::collection($books),
         ]);
     }
 
