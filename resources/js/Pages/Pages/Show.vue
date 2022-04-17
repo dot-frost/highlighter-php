@@ -172,6 +172,12 @@ export default {
                 window.lastCall = setTimeout(this.saveHighlights, 500);
             });
 
+            window.editor.on('removeHighlight', h => {
+                if (h.data?.phrase_id) {
+                    axios.delete(route('phrases.destroy', h.data.phrase_id))
+                }
+            })
+
             window.editor.on(['select', 'selectUpdate'], this.updateHighlightTool);
 
             window.addEventListener('keydown', function (e) {
