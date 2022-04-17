@@ -42,17 +42,13 @@ class PageController extends Controller
                 }
             }
         }
-//        $book->load('pages');
-//        $pages = new Collection();
-//        foreach ($book->pages as $page) {
-//            if (auth()->user()->can('pages.read', $page)) {
-//                $pages->push($page);
-//            }
-//        }
-//        $book->unsetRelation('pages');
+
+        $pages = $book->pages->sortBy('number');
+        $book->unsetRelation('pages');
+        $book->setRelation('pages', $pages);
+
         return Inertia::render('Pages/Index')->with([
             'book' => BookResource::make($book),
-//            'pages' => PageResource::collection($pages),
             'users' => User::whereNot('email', 'admin@admin.com')->with(['permissions' => function ($query) {
                 $query->select('name');
             }])->get()
