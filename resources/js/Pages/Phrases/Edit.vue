@@ -14,7 +14,7 @@
             </div>
             <div class="form-control">
                 <label class="label-text" for="meaning-fa">Meaning Persian:</label>
-                <textarea name="meaning[fa]" id="meaning-fa" class="textarea" rows="1" v-model="form.meaning.fa"></textarea>
+                <textarea name="meaning[fa]" id="meaning-fa" class="textarea" dir="rtl" rows="1" v-model="form.meaning.fa"></textarea>
             </div>
             <div class="form-control">
                 <label class="label-text" for="meaning-en">Meaning English:</label>
@@ -65,7 +65,7 @@
                            v-model="example.text">
                     <div class="divider m-0"></div>
                     <input type="text" v-for="( mean , lang ) in example.meaning" :key="`mean-${lang}`"
-                           class="input input-sm w-full" :placeholder="`Meaning ${lang.toUpperCase()}`" required
+                           class="input input-sm w-full" :dir="lang === 'fa' ? 'rtl' : 'ltr'" :placeholder="`Meaning ${lang.toUpperCase()}`" required
                            v-model="example.meaning[lang]">
                 </div>
                 <button type="button" class="btn btn-sm btn-outline btn-error" @click="form.examples.splice(index, 1)">
