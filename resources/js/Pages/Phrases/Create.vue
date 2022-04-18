@@ -68,9 +68,14 @@
                            class="input input-sm w-full" :dir="lang === 'fa' ? 'rtl' : 'ltr'" :placeholder="`Meaning ${lang.toUpperCase()}`" required
                            v-model="example.meaning[lang]">
                 </div>
-                <button type="button" class="btn btn-sm btn-outline btn-error" @click="form.examples.splice(index, 1)">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <div class="flex flex-col items-center gap-3">
+                    <button type="button" class="btn btn-sm btn-outline btn-error" @click="form.examples.splice(index, 1)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm glass text-gray-700" @click="()=>translateExample(example)">
+                        <i class="fas fa-globe-americas"></i>
+                    </button>
+                </div>
             </div>
             <div class="flex gap-2 pb-2 border-b-2 border-b-gray-700" v-for="(voice , index )  in form.voices"
                  :key="`voice-${index}`">
@@ -200,6 +205,16 @@ export default {
                     .then(res => {
                         console.log(res)
                         this.form.meaning[lang] = res.sentences[0].trans
+                    })
+            }
+        },
+        translateExample(example) {
+            for ( let lang in example.meaning ){
+                let translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=t&dt=bd&dj=1&q=${example.text}&tl=%lang%`
+                fetch(translateUrl.replace('%lang%', lang))
+                    .then(res => res.json())
+                    .then(res => {
+                        example.meaning[lang] = res.sentences[0].trans
                     })
             }
         }
