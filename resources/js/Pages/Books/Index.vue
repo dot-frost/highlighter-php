@@ -1,5 +1,5 @@
 <template>
-    <div class="container flex flex-col justify-start items-center min-h-screen py-2 gap-4">
+    <div class="flex flex-col justify-start items-center max-h-full min-h-full py-2 gap-4">
         <div class="flex justify-between w-full">
             <h1 class="text-4xl font-bold">
                 Books
@@ -11,18 +11,20 @@
                 </Link>
             </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2">
-            <div class="card bg-base-100 shadow-xl image-full card-bordered border-gray-300 bg-base-100 shadow-xl" v-for="book in books" :key="`book-${book.id}`">
-                <figure><img :src="book.cover300Url"  :alt="book.title"/></figure>
-                <div class="card-body justify-between items-center">
-                    <h2 class="card-title">{{ book.title }}</h2>
-                    <div class="card-actions justify-center flex-nowrap justify-evenly">
-                        <Link v-if="$store.auth.can('books.read', book.id)" :href="$route('books.pages.index', book.id)" class="btn btn-primary">
-                            <i class="fas fa-book-open"></i>
-                        </Link>
-                        <Link v-if="$store.auth.can('books.destroy', book.id)" as="button" :href="$route('books.destroy', book.id)" method="delete" class="btn btn-error">
-                            <i class="fas fa-trash-alt"></i>
-                        </Link>
+        <div class="flex-grow max-h-full overflow-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2 pb-16">
+                <div class="card bg-base-100 shadow-xl image-full card-bordered border-gray-300 bg-base-100 shadow-xl" v-for="book in books" :key="`book-${book.id}`">
+                    <figure><img :src="book.cover300Url"  :alt="book.title"/></figure>
+                    <div class="card-body justify-between items-center">
+                        <h2 class="card-title">{{ book.title }}</h2>
+                        <div class="card-actions justify-center flex-nowrap justify-evenly">
+                            <Link v-if="$store.auth.can('books.read', book.id)" :href="$route('books.pages.index', book.id)" class="btn btn-primary">
+                                <i class="fas fa-book-open"></i>
+                            </Link>
+                            <Link v-if="$store.auth.can('books.destroy', book.id)" as="button" :href="$route('books.destroy', book.id)" method="delete" class="btn btn-error">
+                                <i class="fas fa-trash-alt"></i>
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
