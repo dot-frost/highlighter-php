@@ -34,7 +34,7 @@
                 </div>
             </header>
             <!-- Main content -->
-            <main class="flex-1 max-h-full p-5 hover:overflow-auto">
+            <main class="p-5 max-h-full">
                <slot/>
             </main>
         </div>
