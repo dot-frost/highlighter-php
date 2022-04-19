@@ -26,7 +26,7 @@ class BookController extends Controller
                 $books->push($book);
             }
         }
-        $books = $books->sortByDesc('created_at');
+        $books = $books->sortBy('title');
         return Inertia::render('Books/Index')->with([
             'books' => BookResource::collection($books),
         ]);
