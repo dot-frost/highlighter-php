@@ -1,8 +1,8 @@
 <template>
     <div class="fixed z-10 top-0 left-0 right-0 bg-white border-b-4 border-b-gray-700">
         <div id="toolbar" class="w-full flex justify-center items-stretch p-2 gap-2">
-            <label class="absolute left-2 top-1/2 transform -translate-y-1/2">
-                Book: Test
+            <label class="absolute left-2 top-1/2 transform -translate-y-1/2 text-xs">
+                Book: {{ book.title }} | Page: {{ page.number }}
             </label>
             <div id="page-tools" class="flex justify-between gap-2">
                 <div class="btn-group">
