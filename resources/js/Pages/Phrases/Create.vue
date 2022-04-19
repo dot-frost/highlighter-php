@@ -210,7 +210,7 @@ export default {
         },
         translateExample(example) {
             for ( let lang in example.meaning ){
-                let translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=t&dt=bd&dj=1&q=${example.text}&tl=%lang%`
+                let translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&dt=t&dt=bd&dj=1&q=${example.text}&tl=%lang%`
                 fetch(translateUrl.replace('%lang%', lang))
                     .then(res => res.json())
                     .then(res => {

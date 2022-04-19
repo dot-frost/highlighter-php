@@ -195,13 +195,13 @@ export default {
         openTranslateText(website, language) {
             switch (website) {
                 case 'google':
-                    let link = 'https://translate.google.com/#view=home&op=translate&sl=auto&tl=' + language + '&text=' + this.form.text
+                    let link = 'https://translate.google.com/#view=home&op=translate&sl=de&tl=' + language + '&text=' + this.form.text
                     window.open(link, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes,left=500,top=0')
                     break
             }
         },
         translateText() {
-            let translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=t&dt=bd&dj=1&q=${this.form.text}&tl=%lang%`
+            let translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&dt=t&dt=bd&dj=1&q=${this.form.text}&tl=%lang%`
             for ( let lang in this.form.meaning ){
                 fetch(translateUrl.replace('%lang%', lang))
                     .then(res => res.json())
@@ -212,7 +212,7 @@ export default {
         },
         translateExample(example) {
             for ( let lang in example.meaning ){
-                let translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&dt=t&dt=bd&dj=1&q=${example.text}&tl=%lang%`
+                let translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&dt=t&dt=bd&dj=1&q=${example.text}&tl=%lang%`
                 fetch(translateUrl.replace('%lang%', lang))
                     .then(res => res.json())
                     .then(res => {
