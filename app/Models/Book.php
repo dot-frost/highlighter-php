@@ -54,6 +54,26 @@ class Book extends Model
         return Attribute::get(fn() => Storage::url($this->coverPath));
     }
 
+    protected function cover300Path(): Attribute
+    {
+        return Attribute::get(function () {
+            $cover300Path = "{$this->path}/cover-300.jpg";
+            $publicDisk = Storage::disk('public');
+            if (!$publicDisk->exists($cover300Path)) {
+                $cover = imagecreatefromstring($publicDisk->get($this->coverPath));
+                $cover300 = imagescale($cover, 300);
+                $publicDisk->put($cover300Path, '');
+                imagejpeg($cover300, $publicDisk->path($cover300Path));
+            }
+            return $cover300Path;
+        });
+    }
+
+    protected function cover300Url(): Attribute
+    {
+        return Attribute::get(fn() => \Storage::disk('public')->url($this->cover300Path));
+    }
+
     public function pages(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Page::class);

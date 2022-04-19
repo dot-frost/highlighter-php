@@ -12,6 +12,7 @@ class BookResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'coverUrl' => $this->coverUrl,
+            'cover300Url' => $this->cover300Url,
             'pages' => $this->whenLoaded('pages', function () {
                 return PageResource::collection($this->pages);
             }),

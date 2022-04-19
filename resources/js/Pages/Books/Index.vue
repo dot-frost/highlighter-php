@@ -13,7 +13,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2">
             <div class="card bg-base-100 shadow-xl image-full card-bordered border-gray-300 bg-base-100 shadow-xl" v-for="book in books" :key="`book-${book.id}`">
-                <figure><img :src="book.coverUrl"  :alt="book.title"/></figure>
+                <figure><img :src="book.cover300Url"  :alt="book.title"/></figure>
                 <div class="card-body justify-between items-center">
                     <h2 class="card-title">{{ book.title }}</h2>
                     <div class="card-actions justify-center flex-nowrap justify-evenly">
