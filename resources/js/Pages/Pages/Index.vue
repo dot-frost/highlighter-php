@@ -73,7 +73,7 @@
                     <input type="hidden" name="_token" :value="$csrf_token">
                     <input v-for="page in checkedPages" :key="`checked_page_${page}`" type="hidden" name="pages[]" :value="page">
                     <button type="submit" class="btn btn-primary" :disabled="checkedPages.length === 0">
-                        <i class="fas fa-sync-alt"></i>
+                        <i class="fa fa-print"></i>
                     </button>
                 </form>
                 <Link v-if="can('pages', 'create')" class="btn btn-success" >
