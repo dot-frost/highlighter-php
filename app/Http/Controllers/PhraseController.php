@@ -16,18 +16,6 @@ class PhraseController extends Controller
         $validator = validator($request->all(), [
             'text' => 'required|string',
             'meaning' => 'required|array',
-            'highlights' => 'required|json',
-            'page_id' => ['required','integer','exists:pages,id'],
-            'options' => 'array',
-            'options.*.name' => 'required|string',
-            'options.*.value' => 'required|string',
-            'examples' => 'array',
-            'examples.*.text' => 'required|string',
-            'examples.*.meaning' => 'required|array',
-            'examples.*.meaning.*' => 'required|string',
-            'voices' => 'array',
-            'voices.*.name' => 'required|string',
-            'voices.*.link' => 'required|string',
             'exercise' => ['nullable'],
         ]);
         if ($validator->fails()) {
@@ -37,16 +25,11 @@ class PhraseController extends Controller
         $phrase = new Phrase();
         $phrase->phrase = $request->text;
 
-        $options = $request['options'] ?: [];
-        $examples = $request['examples'] ?: [];
-        $voices = $request['voices'] ?: [];
-
         $phrase->information = [
             'meaning' => $request->meaning,
-            'options' => $options,
-            'examples' => $examples,
-            'voices' => $voices,
             'exercise' => $request->exercise,
+            'type' => $request->phraseType,
+            'data' => $request->phraseData,
         ];
         $phrase->page_id = $page->id;
         $phrase->book_id = $page->book_id;
@@ -80,16 +63,6 @@ class PhraseController extends Controller
         $request->validate([
             'text' => 'required|string',
             'meaning' => 'required|array',
-            'options' => 'array',
-            'options.*.name' => 'required|string',
-            'options.*.value' => 'required|string',
-            'examples' => 'array',
-            'examples.*.text' => 'required|string',
-            'examples.*.meaning' => 'required|array',
-            'examples.*.meaning.*' => 'required|string',
-            'voices' => 'array',
-            'voices.*.name' => 'required|string',
-            'voices.*.link' => 'required|string',
             'exercise' => ['nullable'],
         ]);
 
@@ -97,10 +70,9 @@ class PhraseController extends Controller
 
         $phrase->information = [
             'meaning' => $request->meaning,
-            'options' => $request->options,
-            'examples' => $request->examples,
-            'voices' => $request->voices,
             'exercise' => $request->exercise,
+            'type' => $request->phraseType,
+            'data' => $request->phraseData,
         ];
         $phrase->save();
         return back()->with([
@@ -137,11 +109,6 @@ class PhraseController extends Controller
 
     public function destroy(Phrase $phrase){
         $phrase->delete();
-        return back()->with([
-            'alert' => [
-                'type' => 'success',
-                'message' => 'Phrase deleted successfully',
-            ],
-        ]);
+        return response([], 204);
     }
 }
