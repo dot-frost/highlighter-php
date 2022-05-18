@@ -63,3 +63,4 @@ Route::prefix('permissions')->name('permissions.')->middleware('can:permissions'
     Route::post('pages/{page}', 'pageSetUsersPermission')->name('page.set.users');
     Route::get('pages/{page}', 'pageGetUsersPermission')->name('page.get.users');
 });
+Route::get('/getVoice', [\App\Http\Controllers\VoiceController::class,'getVoice'])->name('getVoice');
