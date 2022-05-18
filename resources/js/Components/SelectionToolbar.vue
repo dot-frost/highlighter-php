@@ -1,5 +1,5 @@
 <template>
-    <div v-if="selection.isSelected" class="absolute p-1 flex justify-between glass rounded-md gap-2 bg-black transform -translate-x-1/2 -translate-y-full text-white hover:text-gray-900" :style="selection.position">
+    <div v-if="selection.isSelected" class="absolute p-1 flex justify-between glass rounded-md gap-2 bg-black transform -translate-x-1/2 -translate-y-full text-white hover:text-gray-900 min-w-max" :style="selection.position">
         <div v-if="false" class="btn-group items-center">
             <div class="dropdown">
                 <label tabindex="0" class="btn btn-xs m-1">{{ selection.translator }}</label>
