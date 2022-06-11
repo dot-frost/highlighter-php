@@ -6,7 +6,7 @@
                         class="btn btn-default flex-grow"
                         :class="{'btn-active': t.toLowerCase() === phraseType}"
                         v-text="t"
-                        @click="open"
+                        @click="()=>phraseType ? open() : setType(t)"
                 />
             </Confirm>
         </div>
