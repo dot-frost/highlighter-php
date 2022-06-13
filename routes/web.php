@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::inertia('/login', 'Login')->name('login');
+Route::inertia('/login', 'Login')->middleware('guest')->name('login');
 Route::post('/login', function (Request $request){
     $request->validate([
         'email' => 'required|email',
