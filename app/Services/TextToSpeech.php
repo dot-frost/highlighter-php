@@ -45,23 +45,17 @@ class TextToSpeech
         if ($res->getStatusCode() !== 200) {
             return false;
         }
-        $titleRegex = "/<title>[\w\s]*&ldquo;(\w*)&rdquo;[\w\s|-]*<\/title>/";
-        $str = $res->getBody()->getContents();
-        $matchs = [];
-        preg_match_All($titleRegex, $str, $matchs);
-        if (count($matchs) === 0 || count($matchs[1]) === 0) {
-            return false;
-        }
-        $word = strtolower($matchs[1][0]);
+        $html = $res->getBody()->getContents();
         $parser = new \DOMDocument('1.0', 'UTF-8');
         $internalErrors = libxml_use_internal_errors(true);
-        $parser->loadHTML($str);
+        $parser->loadHTML($html);
         libxml_use_internal_errors($internalErrors);
         $xpath = new \DOMXPath($parser);
-        $nodes = $xpath->query("//*[@id='{$word}__1']/div[2]/span[1]/span[1]/a[1]");
-        if ($nodes->count() === 0) {
-            return false;
-        }
+        $meta = $xpath->query('/html/head/meta[@property="og:url"]');
+        if (!$meta->length) return false;
+        $word = array_reverse(explode('/',$meta[0]->getAttribute('content')))[0];
+        $nodes = $xpath->query('//*[@id="'.$word.'__1"]/div[@class="mini_h2"]/span[@class="form pron"]/span[@class="ptr hwd_sound type-hwd_sound"]/a[@data-src-mp3]');
+        if (!$nodes->length) return false;
         $audioLink = $nodes[0]->getAttribute('data-src-mp3');
         $client = new \GuzzleHttp\Client();
         $res = $client->request('GET', $audioLink);
