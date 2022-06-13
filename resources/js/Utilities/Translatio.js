@@ -100,6 +100,9 @@ class CollinsTranslator extends Translator {
         const url = `https://www.collinsdictionary.com/dictionary/${langs[this._from]}-${langs[this._to]}/${this._text}`;
         window.open(url, windowTarget, features);
     }
+    setText(text) {
+        return super.setText(text.toLowerCase());
+    }
 }
 
 class BAmoozTranslator extends Translator {
