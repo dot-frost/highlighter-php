@@ -8,6 +8,22 @@
                         <button type="button" class="btn btn-xs glass text-gray-700" id="translate-text" @click="translateText">
                             <i class="fas fa-globe-americas"></i>
                         </button>
+                        <Voice :voices="form.voice">
+                            <template v-slot="{ isPlaying, activeVoice, play }">
+                                <button type="button" class="btn btn-xs glass text-gray-700 gap-1"
+                                        :class="{'bg-red-400 hover:bg-red-400': form.voice.collins === false, 'bg-green-400 hover:bg-green-400': activeVoice === 'collins' && isPlaying}"
+                                        @click="() => playAudio('collins', play)">
+                                    Collins
+                                    <i class="fas fa-volume-high"></i>
+                                </button>
+                                <button type="button" class="btn btn-xs glass text-gray-700 gap-1"
+                                        :class="{'bg-red-400 hover:bg-red-400': form.voice.google === false, 'bg-green-400 hover:bg-green-400': activeVoice === 'google' && isPlaying}"
+                                        @click="() => playAudio('google', play)">
+                                    Google
+                                    <i class="fas fa-volume-high"></i>
+                                </button>
+                            </template>
+                        </Voice>
                     </label>
                 </label>
                 <textarea name="text" id="text" class="textarea h-full" rows="auto " v-model="form.text" @select="selectionSetText"></textarea>
@@ -19,39 +35,6 @@
             <div class="form-control">
                 <label class="label-text" for="meaning-en">Meaning English:</label>
                 <textarea name="meaning[en]" id="meaning-en" class="textarea" rows="1" v-model="form.meaning.en"></textarea>
-            </div>
-            <div class="form-control">
-                <label class="label-text" for="exercise">Exercise:</label>
-                <input type="text" name="exercise" id="exercise" class="input input-sm" v-model="form.exercise">
-            </div>
-            <div class="form-control">
-                <label class="label" for="exercise">
-                    <label class="label-text" for="exercise">Voice Google:</label>
-                    <label class="label-text-alt flex gap-2">
-                        <button type="button" class="btn btn-xs glass text-gray-700" id="get-google-audio" @click="()=>getAudio(form.text, 'google', (link)=>form.voice.google = link)">
-                            <i class="fa fas fa-download"></i>
-                        </button>
-                        <button type="button" class="btn btn-xs glass text-gray-700" id="translate-text" @click="() => playAudio(form.voice.google)">
-                            <i class="fa fas fa-volume-up"></i>
-                        </button>
-                    </label>
-                </label>
-                <input type="text" name="exercise" id="voice-google" class="input input-sm" v-model="form.voice.google">
-            </div>
-            <div class="form-control">
-                <label class="label" for="exercise">
-                    <label class="label-text" for="exercise">Voice Collins:</label>
-                    <label class="label-text-alt flex gap-2">
-                        <button type="button" class="btn btn-xs glass text-gray-700" id="get-collins-audio" @click="()=>getAudio(form.text, 'collins', (link)=>form.voice.collins = link)">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <button type="button" class="btn btn-xs glass text-gray-700" id="translate-text" @click="() => playAudio(form.voice.collins)">
-                            <i class="fas fa-volume-up"></i>
-                        </button>
-
-                    </label>
-                </label>
-                <input type="text" name="exercise" id="voice-collins" class="input input-sm" v-model="form.voice.collins">
             </div>
         </div>
         <div class="flex flex-col gap-2">
@@ -77,6 +60,7 @@ import { Link } from "@inertiajs/inertia-vue3";
 import SelectionToolbar , { selectionSetText } from "../../Components/SelectionToolbar";
 import Translate from "../../Utilities/Translatio";
 import Information from "../../Components/Phrases/Information";
+import Voice from "../../Components/Phrases/Voice";
 
 export default {
     setup({ phrase }) {
@@ -108,6 +92,7 @@ export default {
         phrase: Object,
     },
     components: {
+        Voice,
         Information,
         Link,
         SelectionToolbar
@@ -148,8 +133,12 @@ export default {
                 set(res.data.voices[source])
             })
         },
-        playAudio(url){
-            new Audio(url).play()
+        playAudio(source, play){
+            this.getAudio(this.form.text, source, (url) => {
+                if (! url.endsWith('mp3')) return this.form.voice[source] = false
+                this.form.voice[source] = url
+                play(source)
+            })
         },
     },
 }
