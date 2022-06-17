@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <Information v-model:data="form.phraseData" v-model:phrase-type="form.phraseType"/>
+            <Information v-model:data="form.phraseData" v-model:phrase-type="form.phraseType" v-model:phrase="form.text"/>
         </div>
         <div class="flex justify-evenly gap-1">
             <button type="submit" class="btn btn-sm btn-outline gap-2 w-1/2">

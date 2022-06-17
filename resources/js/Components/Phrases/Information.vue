@@ -27,6 +27,9 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </Confirm>
+                                    <button v-if="getField(key).hasAutoFill" type="button" class="btn btn-xs" @click="() => fill(getField(key).fill, (vals)=> vals.forEach(val => data[key].push(val)))">
+                                        <i class="fas fa-magic"></i>
+                                    </button>
                                     <button v-if="getField(key).hasTranslation" type="button" class="btn btn-xs" @click="() => getField(key).translate(value)">
                                         <i class="fas fa-language"></i>
                                     </button>
@@ -43,6 +46,9 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </Confirm>
+                                <button v-if="getField(key).hasAutoFill" type="button" class="btn btn-xs" @click="() => fill(getField(key).fill, (val)=> data[key] = val)">
+                                    <i class="fas fa-magic"></i>
+                                </button>
                                 <button v-if="getField(key).hasTranslation" type="button" class="btn btn-xs" @click="() => getField(key).translate(value)">
                                     <i class="fas fa-language"></i>
                                 </button>
@@ -63,6 +69,10 @@ export default {
     name: 'Information',
     components: {Confirm},
     props: {
+        phrase: {
+            type: String,
+            required: true
+        },
         phraseType : {
             type: String,
             default: null,
@@ -79,10 +89,25 @@ export default {
             this.$emit('update:phraseType', newPhraseType)
         }
     },
+    data() {
+        return {
+            source: null,
+        }
+    },
     computed: {
         allTypes: () => Object.keys(types).map(t => t[0].toUpperCase() + t.slice(1)),
     },
     methods: {
+        fill(collect, set) {
+            if (this.source) return set(collect(this.source));
+            let url = 'https://www.collinsdictionary.com/dictionary/german-english/' + this.phrase
+            fetch(url, {mode: 'cors'})
+                .then(response => response.text())
+                .then(text => {
+                    this.source = (new DOMParser).parseFromString(text, 'text/html');
+                    this.fill(collect, set);
+                })
+        },
         setType(type) {
             type = type.toLowerCase()
             this.$emit('update:phraseType', type);
@@ -103,13 +128,12 @@ export default {
             return types[this.phraseType][key].component
         },
         getComponentProps(key) {
-            console.log(types[this.phraseType][key].props)
             return types[this.phraseType][key].props
         },
         getFields() {
             let fields = {}
             for (let key in types[this.phraseType]) {
-                if (! key in this.data || types[this.phraseType][key].isMultiple) {
+                if (typeof this.data[key] === 'undefined' || types[this.phraseType][key].isMultiple) {
                     fields[key] = types[this.phraseType][key]
                 }
             }
