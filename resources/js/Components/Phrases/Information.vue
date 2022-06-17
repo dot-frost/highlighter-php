@@ -143,6 +143,14 @@ export default {
             return types[this.phraseType][key]
         },
     },
-
+    beforeCreate() {
+        if (this.phraseType) {
+            for (let key in this.data){
+                if (!(key in types[this.phraseType])) {
+                    delete this.data[key]
+                }
+            }
+        }
+    }
 }
 </script>
