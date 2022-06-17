@@ -4,7 +4,7 @@
             <div class="form-control">
                 <label for="text" class="label">
                     <label class="label-text" for="text">Text:</label>
-                    <label class="label-text-alt">
+                    <label class="label-text-alt gap-1 flex flex-row-reverse">
                         <button type="button" class="btn btn-xs glass text-gray-700" id="translate-text" @click="translateText">
                             <i class="fas fa-globe-americas"></i>
                         </button>
