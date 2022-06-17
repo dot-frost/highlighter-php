@@ -3,7 +3,7 @@
         <div class="form-control w-full">
             <label class="input-group input-group-sm">
                 <span class="flex-grow-0 text-xs">{{ label }}</span>
-                <textarea v-model="value" :placeholder="placeholder" rows="1" class="textarea textarea-bordered p-2 leading-tight min-h-[2rem] flex-grow" :dir="isRtl? 'rtl' : 'ltr'" @input="SetHeight"/>
+                <textarea v-model="value" :placeholder="placeholder" rows="1" class="textarea textarea-bordered p-2 leading-tight min-h-[2rem] flex-grow" :dir="isRtl? 'rtl' : 'ltr'" ref="autoHeight" @input="SetHeight"/>
             </label>
         </div>
         <div v-if="$slots.tools" class="flex-grow-0 flex gap-1">
@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import {computed} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 
 const props = defineProps({
     label: {
@@ -38,10 +38,11 @@ const value = computed({
     get: () => props.modelValue,
     set: (value) => emit('update:modelValue', value)
 })
-
+const autoHeight = ref(null)
 function SetHeight(e) {
     let target = e.target;
     target.style.height = 'auto';
     target.style.height = target.scrollHeight + 2 + 'px'
 }
+onMounted(() => SetHeight({target:autoHeight.value}))
 </script>
