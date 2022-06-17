@@ -127,7 +127,6 @@ class BAmoozTranslator extends Translator {
 
 class TranslatorFactory {
     static create(type, { text, to, from }) {
-        console.log(type, text, to, from);
         switch (type) {
             case 'google':
                 return new GoogleTranslator({ text:text, to:to, from:from });
@@ -144,7 +143,6 @@ class TranslatorFactory {
 class Translate {
     _translator;
     constructor(type, { text, to, from }) {
-        debugger
         this._translator = TranslatorFactory.create(type, { text:text, to:to, from:from });
     }
     setText(text) {
