@@ -46,7 +46,16 @@ class Book extends Model
 
     protected function coverPath(): Attribute
     {
-        return Attribute::get(fn() => $this->path . '/cover.jpg');
+        $storage = Storage::disk('public');
+        $coverPath = $this->path . '/cover.jpg';
+        if (!$storage->exists($coverPath)) {
+            $pages = collect($storage->files($this->path . '/pages'));
+            $firstPage = $pages->sort()->first();
+            if ($firstPage) {
+                $storage->copy($firstPage, $coverPath);
+            }
+        }
+        return Attribute::get(fn() => $coverPath);
     }
 
     protected function coverUrl(): Attribute
