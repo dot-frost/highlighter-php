@@ -232,21 +232,150 @@ const getVerbConjugation = async (url, word, mainContent) => {
     return (new DOMParser).parseFromString( window.verbTable, 'text/html')
 }
 const verb = {
-    regular: new CheckboxField('Regular').setIsRequired(true),
-    reflective: new CheckboxField('Reflective').setIsRequired(true),
-    past: new InputField('Past').setIsRequired(true),
-    pastPerfect: new InputField('Past Perfect').setIsRequired(true),
-    auxiliaryVerb: new SelectField('Auxiliary Verb', ['haben', 'sein']).setIsRequired(true),
+    regular: new SelectField('Regular', ['Regular', 'Irregular']).setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
+        let verbTable = await getVerbConjugation(url, word, mainContent)
+        word = mainContent.querySelector(`#${word}__1`).dataset.typeBlock
+        let conjugations = verbTable.querySelectorAll('.short_verb_table > .conjugation ')
+        if (!conjugations) throw new Error('No conjugations found')
+        let preterite = Array.from(conjugations).find(c => c.children[0].textContent.toLowerCase().trim() === 'preterite')
+        if (!preterite) throw new Error('No preterite found')
+        let ich = Array.from(preterite.querySelectorAll('span.infl')).find(c => c.firstChild.textContent.toLowerCase().trim() === 'ich')
+        if (!ich) throw new Error('No ich found')
+        ich.removeChild(ich.firstChild)
+        let past = ich.textContent.toLowerCase().trim()
+        let presentPerfect = Array.from(conjugations).find(c => c.children[0].textContent.toLowerCase().trim() === 'present perfect')
+        if (!presentPerfect) throw new Error('No present perfect found')
+        let wir = Array.from(presentPerfect.querySelectorAll('span.infl')).find(c => c.firstChild.textContent.toLowerCase().trim() === 'wir')
+        if (!wir) throw new Error('No wir found')
+        wir.removeChild(wir.firstChild)
+        presentPerfect = wir.textContent.toLowerCase().trim()
+        let newVerb = [
+            word.slice(0, -2) + 'te',
+            'ge'+word.slice(0, -2) + 't',
+        ]
+        console.log(newVerb)
+        let pastWords = past.split(' ')
+        let presentPerfectWords = presentPerfect.split(' ')
+        if ( pastWords.includes(newVerb[0]) && presentPerfectWords.includes(newVerb[1])) {
+            return 'Regular'
+        }
+        return 'Irregular'
+    }),
+    reflective: new SelectField('Reflective', ['Reflective', 'Non-Reflective']).setIsRequired(true),
+    past: new InputField('Past').setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
+        let verbTable = await getVerbConjugation(url, word, mainContent)
+        let conjugations = verbTable.querySelectorAll('.short_verb_table > .conjugation ')
+        if (!conjugations) throw new Error('No conjugations found')
+        let preterite = Array.from(conjugations).find(c => c.children[0].textContent.toLowerCase().trim() === 'preterite')
+        if (!preterite) throw new Error('No preterite found')
+        let ich = Array.from(preterite.querySelectorAll('span.infl')).find(c => c.firstChild.textContent.toLowerCase().trim() === 'ich')
+        if (!ich) throw new Error('No ich found')
+        ich.removeChild(ich.firstChild)
+        return ich.textContent.toLowerCase().trim()
+    }),
+    presentPerfect: new InputField('Present Perfect').setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
+        let verbTable = await getVerbConjugation(url, word, mainContent)
+        let conjugations = verbTable.querySelectorAll('.short_verb_table > .conjugation ')
+        if (!conjugations) throw new Error('No conjugations found')
+        let presentPerfect = Array.from(conjugations).find(c => c.children[0].textContent.toLowerCase().trim() === 'present perfect')
+        if (!presentPerfect) throw new Error('No present perfect found')
+        let wir = Array.from(presentPerfect.querySelectorAll('span.infl')).find(c => c.firstChild.textContent.toLowerCase().trim() === 'wir')
+        if (!wir) throw new Error('No wir found')
+        wir.removeChild(wir.firstChild)
+        return wir.textContent.toLowerCase().trim()
+    }),
+    auxiliaryVerb: new SelectField('Auxiliary Verb', ['haben', 'sein']).setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
+        let verbTable = await getVerbConjugation(url, word, mainContent)
+        let conjugations = verbTable.querySelectorAll('.short_verb_table > .conjugation ')
+        if (!conjugations) throw new Error('No conjugations found')
+        let presentPerfect = Array.from(conjugations).find(c => c.children[0].textContent.toLowerCase().trim() === 'present perfect')
+        if (!presentPerfect) throw new Error('No present perfect found')
+        let wir = Array.from(presentPerfect.querySelectorAll('span.infl')).find(c => c.firstChild.textContent.toLowerCase().trim() === 'wir')
+        if (!wir) throw new Error('No wir found')
+        wir.removeChild(wir.firstChild)
+        return wir.textContent.toLowerCase().trim().search('haben') !== -1 ? 'haben' : 'sein'
+    }),
+    imperative: new InputField('Imperative').setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
+
+        let verbTable = await getVerbConjugation(url, word, mainContent)
+        let heads = verbTable.querySelectorAll('.short_verb_table > h2 ')
+        if (!heads) throw new Error('No heads found')
+        let imperativeHead = Array.from(heads).find(c => c.textContent.toLowerCase().trim() === 'imperative')
+        if (!imperativeHead) throw new Error('No imperative found')
+        let conjugation = imperativeHead.nextElementSibling
+        if (!conjugation) throw new Error('No conjugation found')
+        let data = Array.from(conjugation.children).reduce((acc, cur)=> {
+            if (cur.textContent.includes(' (du)')) {
+                acc.push(cur.querySelector('b').textContent.toLowerCase().trim())
+            }
+            return acc
+        }, [])
+        return data.join(' , ')
+    }),
     case: new CaseField('Case', ['AKK', 'DAT', 'GEN']).setIsMultiple(true),
     description: new TextareaField('Description').setIsMultiple(true),
-    examples: new ExampleField('Examples').setHasSelection(true).setHasTranslation(true).setIsMultiple(true),
+    examples: new ExampleField('Examples').setHasSelection(true).setHasTranslation(true).setIsMultiple(true).setFillCallback((url, word, mainContent)=> {
+        const examples = mainContent.querySelectorAll('.res_cell_center .he .assets > .cB.cB-e > .listExBlock > .type-example')
+        if (examples.length === 0) throw new Error('No examples found')
+        return Array.from(examples).slice(0,4).map(e => {
+            let text = e.querySelector('.quote').textContent.trim()
+            return {
+                text,
+                meaning: [
+                    { lang: 'en', isRtl: false, text: '' },
+                    { lang: 'fa', isRtl: true, text: '' },
+                ],
+            }
+        })
+    }),
 }
 const adjective = {
-    superiorAdjective: new InputField('Superior Adjective').setIsRequired(true),
-    superlativeAdjective: new InputField('Superlative Adjective').setIsRequired(true),
+    superiorAdjective: new InputField('Superior Adjective').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
+        let blocks = mainContent.querySelectorAll('.cB.cB-def.dictionary.biling[data-type-block]')
+        if (blocks.length === 0) throw new Error('No blocks found')
+        let block = Array.from(blocks).find(b => {
+            let type = b.querySelector('.definitions > .hom > .gramGrp.hi.rend-sc > .pos')
+            if (!type) return false
+            return type.textContent.toLowerCase().trim() === 'adjective'
+        })
+        if (!block) throw new Error('No block found')
+        let typeGrams = block.querySelectorAll('.inflected_forms.type-infl > .lbl.type-gram')
+        if (typeGrams.length === 0) throw new Error('No type grams found')
+        let typeGram = Array.from(typeGrams).find(g => g.textContent.toLowerCase().trim() === 'comparative')
+        if (!typeGram) throw new Error('No type gram found')
+        return typeGram.nextElementSibling.textContent.toLowerCase().trim()
+    }),
+    superlativeAdjective: new InputField('Superlative Adjective').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
+        let blocks = mainContent.querySelectorAll('.cB.cB-def.dictionary.biling[data-type-block]')
+        if (blocks.length === 0) throw new Error('No blocks found')
+        let block = Array.from(blocks).find(b => {
+            let type = b.querySelector('.definitions > .hom > .gramGrp.hi.rend-sc > .pos')
+            if (!type) return false
+            return type.textContent.toLowerCase().trim() === 'adjective'
+        })
+        if (!block) throw new Error('No block found')
+        let typeGrams = block.querySelectorAll('.inflected_forms.type-infl > .lbl.type-gram')
+        if (typeGrams.length === 0) throw new Error('No type grams found')
+        let typeGram = Array.from(typeGrams).find(g => g.textContent.toLowerCase().trim() === 'superlative')
+        if (!typeGram) throw new Error('No type gram found')
+        return typeGram.nextElementSibling.textContent.toLowerCase().trim()
+    }),
     case: new CaseField('Case', ['AKK', 'DAT', 'GEN']).setIsMultiple(true),
     description: new TextareaField('Description').setIsMultiple(true),
-    examples: new ExampleField('Examples').setHasSelection(true).setHasTranslation(true).setIsMultiple(true),
+    examples: new ExampleField('Examples').setHasSelection(true).setHasTranslation(true).setIsMultiple(true).setFillCallback((url, word, mainContent)=> {
+        const examples = mainContent.querySelectorAll('.res_cell_center .he .assets > .cB.cB-e > .listExBlock > .type-example')
+        if (examples.length === 0) throw new Error('No examples found')
+        return Array.from(examples).slice(0,4).map(e => {
+            let text = e.querySelector('.quote').textContent.trim()
+            return {
+                text,
+                meaning: [
+                    { lang: 'en', isRtl: false, text: '' },
+                    { lang: 'fa', isRtl: true, text: '' },
+                ],
+            }
+        })
+    }),
 }
 const other = {
     description: new TextareaField('Description').setIsMultiple(true),
