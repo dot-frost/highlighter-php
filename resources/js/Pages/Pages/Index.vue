@@ -116,7 +116,7 @@
                             </div>
                             <h2 class="card-title">{{ page.number }}</h2>
                             <div class="card-actions justify-center flex-nowrap justify-evenly">
-                                <Link v-if="can('pages.read', page.id)" :href="$route('books.pages.show', [book.id, page.id])" class="btn btn-primary">
+                                <Link v-if="can('pages.read', page.id)" :href="$route('books.pages.show', [book.id, page.number])" class="btn btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </Link>
                                 <Link  v-if="can('pages.destroy', page.id)" as="button" :href="$route('books.pages.destroy', [book.id, page.id])" method="delete" class="btn btn-error">

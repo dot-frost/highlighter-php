@@ -10,11 +10,11 @@
                         <i class="fas fa-book"></i>
                     </Link>
                     <Link role="button" class="btn btn-sm btn-outline btn-primary" v-if="previous"
-                          :href="$route('books.pages.show', [book.id, previous.id])">
+                          :href="$route('books.pages.show', [book.id, previous.number])">
                         <i class="fa-solid fa-arrow-left"></i>
                     </Link>
                     <Link role="button" class="btn btn-sm btn-outline btn-primary" v-if="next"
-                          :href="$route('books.pages.show', [book.id, next.id])">
+                          :href="$route('books.pages.show', [book.id, next.number])">
                         <i class="fa-solid fa-arrow-right"></i>
                     </Link>
                 </div>

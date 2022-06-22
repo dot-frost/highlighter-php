@@ -76,8 +76,9 @@ class PageController extends Controller
         ]);
     }
 
-    public function show(Book $book, Page $page)
+    public function show(Book $book, $page)
     {
+        $page = $book->pages()->where('number', $page)->firstOrFail();
         return Inertia::render('Pages/Show')->with([
             'book' => BookResource::make($book),
             'next' => $page->next?PageResource::make($page->next):null,
