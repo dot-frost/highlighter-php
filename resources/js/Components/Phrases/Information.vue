@@ -99,7 +99,10 @@ export default {
     },
     methods: {
         fill(collect, set) {
-            if (this.source) return set(collect(this.source));
+            if (this.source) {
+                let res = collect(this.source)
+                return (res instanceof Promise) ? res.then(set) : set(res)
+            }
             let url = 'https://www.collinsdictionary.com/dictionary/german-english/' + this.phrase
             fetch(url, {mode: 'cors'})
                 .then(response => response.text())
