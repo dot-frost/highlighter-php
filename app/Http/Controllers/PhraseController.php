@@ -29,6 +29,7 @@ class PhraseController extends Controller
             'meaning' => $request->meaning,
             'exercise' => $request->exercise,
             'type' => $request->phraseType,
+            'voice' => $request->voice,
             'data' => $request->phraseData,
         ];
         $phrase->page_id = $page->id;
@@ -72,6 +73,7 @@ class PhraseController extends Controller
             'meaning' => $request->meaning,
             'exercise' => $request->exercise,
             'type' => $request->phraseType,
+            'voice' => $request->voice,
             'data' => $request->phraseData,
         ];
         $phrase->save();
