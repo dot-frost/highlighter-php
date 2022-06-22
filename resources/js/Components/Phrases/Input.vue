@@ -3,7 +3,7 @@
         <div class="flex-grow form-control">
             <label class="input-group input-group-sm">
                 <span class="flex-grow-0 text-xs">{{ label }}</span>
-                <input type="text" v-model="value" :placeholder="placeholder" class="input input-bordered input-sm flex-grow" />
+                <input type="text" v-model="value" :placeholder="placeholder" class="input input-bordered input-sm flex-grow w-full" />
             </label>
         </div>
         <div v-if="$slots.tools" class="flex-grow-0 flex gap-1">
