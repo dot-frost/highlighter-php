@@ -200,11 +200,11 @@ const noun = {
         return plural.previousElementSibling.textContent.trim()
     }),
     genitive: new InputField('Genitive').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
-        const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .gramGrp > .pos`)
+        const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .form.inflected_forms.type-infl > .type-gram `)
         if (pos.length === 0) throw new Error('No pos found')
-        let gen = Array.from(pos).map(p => p.textContent.trim().toLowerCase()).find(p => p.endsWith('noun'))
-        if (!gen) throw new Error('No gen found')
-        return gen.split(' ').shift()
+        let plural = Array.from(pos).find(p => p.textContent.trim() === 'genitive')
+        if (!plural) throw new Error('No genitive found')
+        return plural.previousElementSibling.textContent.trim()
     }),
     case: new CaseField('Case', ['AKK', 'DAT', 'GEN']).setIsMultiple(true),
     description: new TextareaField('Description').setIsMultiple(true),
