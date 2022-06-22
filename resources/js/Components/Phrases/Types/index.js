@@ -185,7 +185,13 @@ class CaseField extends Field {
 }
 
 const noun = {
-    gender: new SelectField('Gender', ['das', 'der', 'die', 'die(PI)'] ).setIsRequired(true),
+    gender: new InputField('Gender').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
+        const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .gramGrp > .pos`)
+        if (pos.length === 0) throw new Error('No pos found')
+        let gen = Array.from(pos).map(p => p.textContent.trim().toLowerCase()).find(p => p.endsWith('noun'))
+        if (!gen) throw new Error('No gen found')
+        return gen.split(' ').shift()
+    }),
     plural: new InputField('Plural').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
         const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .form.inflected_forms.type-infl > .type-gram `)
         if (pos.length === 0) throw new Error('No pos found')
