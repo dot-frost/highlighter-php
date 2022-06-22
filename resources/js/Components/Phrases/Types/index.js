@@ -223,6 +223,14 @@ const noun = {
         })
     }),
 }
+const getVerbConjugation = async (url, word, mainContent) => {
+    let link = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .verbtable`)
+    if (link.length === 0) throw new Error('No verb table found')
+    if ( window.verbTable === undefined) {
+        window.verbTable = await fetch(link[0].href, { mode: 'cors', }).then(res => res.text())
+    }
+    return (new DOMParser).parseFromString( window.verbTable, 'text/html')
+}
 const verb = {
     regular: new CheckboxField('Regular').setIsRequired(true),
     reflective: new CheckboxField('Reflective').setIsRequired(true),
