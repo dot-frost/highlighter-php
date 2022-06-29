@@ -27,7 +27,7 @@ class BookController extends Controller
                     \Storage::disk('public')->makeDirectory($book->path . '/pages');
                     foreach (\Storage::disk('public')->files($book->path) as $file) {
                         if (\Str::contains($file, 'cover')) continue;
-                        \Storage::disk('public')->move($file,$book->path . '/pages');
+                        \Storage::disk('public')->move($file,$book->path . '/pages/'. \Str::afterLast($file, '/'));
                     }
                 }
                 $books->push($book);
