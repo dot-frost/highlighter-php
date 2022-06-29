@@ -23,6 +23,13 @@ class BookController extends Controller
                 $book->title = $directoryName;
                 $book->save();
                 \Storage::disk('public')->move($bookDirectory, $book->path);
+                if (!\Storage::disk('public')->exists($book->path . '/pages')) {
+                    \Storage::disk('public')->makeDirectory($book->path . '/pages');
+                    foreach (\Storage::disk('public')->files($book->path) as $file) {
+                        if (\Str::contains($file, 'cover')) continue;
+                        \Storage::disk('public')->move($file,$book->path . '/pages');
+                    }
+                }
                 $books->push($book);
             }
         }
