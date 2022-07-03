@@ -119,7 +119,7 @@ export default {
             for ( let lang in this.form.meaning ){
                 new Translate('google', {text: this.form.text, to: lang, from: 'auto'})
                     .translate(res => {
-                        this.form.meaning[lang] = res.sentences[0].trans
+                        this.form.meaning[lang] = res.sentences.map(s=>s.trans).join()
                     })
             }
         },

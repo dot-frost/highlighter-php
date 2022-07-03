@@ -156,7 +156,7 @@ class ExampleField extends Field {
         translator.setFrom(sourceLanguage)
         value.meaning.forEach(mean =>  {
             translator.setTo(mean.lang)
-            translator.translate(res => mean.text = res.sentences[0].trans)
+            translator.translate(res => mean.text = res.sentences.map(s=>s.trans).join())
         })
     }
 }
