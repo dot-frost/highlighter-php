@@ -26,15 +26,15 @@
                         </Voice>
                     </label>
                 </label>
-                <textarea name="text" id="text" class="textarea h-full" rows="auto " v-model="form.text" @select="selectionSetText"></textarea>
+                <textarea name="text" id="text" class="textarea h-full" rows="auto " v-model="form.text" @select="selectionSetText" v-auto-height></textarea>
             </div>
             <div class="form-control">
                 <label class="label-text" for="meaning-fa">Meaning Persian:</label>
-                <textarea name="meaning[fa]" id="meaning-fa" class="textarea" dir="rtl" rows="1" v-model="form.meaning.fa"></textarea>
+                <textarea name="meaning[fa]" id="meaning-fa" class="textarea" dir="rtl" rows="1" v-model="form.meaning.fa" v-auto-height></textarea>
             </div>
             <div class="form-control">
                 <label class="label-text" for="meaning-en">Meaning English:</label>
-                <textarea name="meaning[en]" id="meaning-en" class="textarea" rows="1" v-model="form.meaning.en"></textarea>
+                <textarea name="meaning[en]" id="meaning-en" class="textarea" rows="1" v-model="form.meaning.en" v-auto-height></textarea>
             </div>
         </div>
         <div class="flex flex-col gap-2">
@@ -61,7 +61,7 @@ import SelectionToolbar , { selectionSetText } from "../../Components/SelectionT
 import Translate from "../../Utilities/Translatio";
 import Information from "../../Components/Phrases/Information";
 import Voice from "../../Components/Phrases/Voice";
-
+import { vAutoHeight } from '../../Components/Phrases/Textarea'
 export default {
     setup({ phrase }) {
         const editForm = useForm({
@@ -140,6 +140,9 @@ export default {
                 play(source)
             })
         },
+    },
+    directives: {
+        autoHeight: vAutoHeight ,
     },
 }
 </script>
