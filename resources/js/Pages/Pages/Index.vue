@@ -13,9 +13,9 @@
                                     View
                                     <label class="swap">
                                         <input type="checkbox" value="view" ref="permission-view"
-                                               :indeterminate="!(users.every(u => u.permissions.includes('view')) || users.every(u => !u.permissions.includes('view')))"
-                                               :checked="users.every(u => u.permissions.includes('view'))"
-                                               @change="()=> togglePermissionForAll('view', $refs['permission-view'].checked)"
+                                               :indeterminate="!(users.every(u => u.permissions.includes('read')) || users.every(u => !u.permissions.includes('read')))"
+                                               :checked="users.every(u => u.permissions.includes('read'))"
+                                               @change="()=> togglePermissionForAll('read', $refs['permission-view'].checked)"
                                         >
                                         <i class="swap-on fa fa-lock-open"></i>
                                         <i class="swap-off fa fa-lock"></i>
@@ -26,9 +26,9 @@
                                     Edit
                                     <label class="swap">
                                         <input type="checkbox" value="edit" ref="permission-edit"
-                                               :indeterminate="!(users.every(u => u.permissions.includes('edit')) || users.every(u => !u.permissions.includes('edit')))"
-                                               :checked="users.every(u => u.permissions.includes('edit'))"
-                                               @change="()=> togglePermissionForAll('edit', $refs['permission-edit'].checked)"
+                                               :indeterminate="!(users.every(u => u.permissions.includes('update')) || users.every(u => !u.permissions.includes('update')))"
+                                               :checked="users.every(u => u.permissions.includes('update'))"
+                                               @change="()=> togglePermissionForAll('update', $refs['permission-edit'].checked)"
                                         >
                                         <i class="swap-on fa fa-lock-open"></i>
                                         <i class="swap-off fa fa-lock"></i>
@@ -43,14 +43,14 @@
                                 <td>{{ user.email }}</td>
                                 <td>
                                     <label class="swap">
-                                        <input type="checkbox" value="view" v-model="user.permissions"/>
+                                        <input type="checkbox" value="read" v-model="user.permissions"/>
                                         <i class="swap-on fa fa-lock-open"></i>
                                         <i class="swap-off fa fa-lock"></i>
                                     </label>
                                 </td>
                                 <td>
                                     <label class="swap">
-                                        <input type="checkbox" value="edit" v-model="user.permissions"/>
+                                        <input type="checkbox" value="update" v-model="user.permissions"/>
                                         <i class="swap-on fa fa-lock-open"></i>
                                         <i class="swap-off fa fa-lock"></i>
                                     </label>
@@ -157,6 +157,11 @@ export default {
                 if (window.lastSetPermission) clearTimeout(window.lastSetPermission);
                 window.lastSetPermission = setTimeout(()=>{
                     NProgress.start();
+                    users = JSON.parse(JSON.stringify(users));
+                    users.forEach(user => {
+                        user.permissions || (user.permissions = [])
+                        user.permissions = user.permissions.filter(p => ['read', 'update'].includes(p))
+                    });
                     this.checkedPages.forEach(pageId => {
                         axios.post(route('permissions.page.set.users', pageId), { users }).then(()=>{
                             NProgress.done();
