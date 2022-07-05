@@ -41,7 +41,7 @@ Route::prefix('books')->name('books.')->middleware(['auth', 'can:books.read'])->
     Route::name('pages.')->prefix('{book}/pages')->controller(\App\Http\Controllers\PageController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'store')->name('store')->middleware('can:pages.create');
-        Route::get('/{page}', 'show')->name('show')->middleware('can:pages.read,page');
+        Route::get('/{page}', 'show')->name('show');
         Route::delete('/{page}', 'destroy')->name('destroy')->middleware('can:pages.delete,page');
         Route::put('/{page}', 'update')->name('update')->middleware('can:pages.update,page');
         Route::post('/{page}/last-text', 'lastText')->name('last-text')->middleware('can:pages.update,page');
