@@ -93,11 +93,29 @@ class Page extends Model
 
     public function next(): Attribute
     {
-        return Attribute::get(fn() => $this->book->pages()->whereRaw('CAST(number as SIGNED) > ?', [$this->number])->orderByRaw('CAST(number as SIGNED)')->first());
+        return Attribute::get(function () {
+            $page = $this->book->pages()->whereRaw('CAST(number as SIGNED) > ?', [$this->number])->orderByRaw('CAST(number as SIGNED)')->first();
+            while ($page) {
+                if (auth()->user()->can('pages.read', $page)) {
+                    return $page;
+                }
+                $page = $page->next;
+            }
+            return null;
+        });
     }
     public function previous(): Attribute
     {
-        return Attribute::get(fn() => $this->book->pages()->whereRaw('CAST(number as SIGNED) < ?', [$this->number])->orderByRaw('CAST(number as SIGNED) desc')->first());
+        return Attribute::get(function (){
+            $page = $this->book->pages()->whereRaw('CAST(number as SIGNED) < ?', [$this->number])->orderByRaw('CAST(number as SIGNED) desc')->first();
+            while ($page) {
+                if (auth()->user()->can('pages.read', $page)) {
+                    return $page;
+                }
+                $page = $page->previous;
+            }
+            return null;
+        });
     }
 
     public function phrases():Attribute
