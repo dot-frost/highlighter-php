@@ -3,7 +3,7 @@
         <div class="form-control w-full">
             <label class="input-group input-group-sm">
                 <span class="flex-grow-0 text-xs">{{ label }}</span>
-                <textarea v-model="value" :placeholder="placeholder" rows="1" class="textarea textarea-bordered p-2 leading-tight min-h-[2rem] flex-grow" :dir="isRtl? 'rtl' : 'ltr'" ref="autoHeight" @input="SetHeight"/>
+                <textarea v-model="value" :placeholder="placeholder" rows="1" class="textarea textarea-bordered p-2 leading-tight min-h-[2rem] flex-grow" :dir="isRtl? 'rtl' : 'ltr'" v-auto-height/>
             </label>
         </div>
         <div v-if="$slots.tools" class="flex-grow-0 flex gap-1">
@@ -38,11 +38,25 @@ const value = computed({
     get: () => props.modelValue,
     set: (value) => emit('update:modelValue', value)
 })
-const autoHeight = ref(null)
-function SetHeight(e) {
-    let target = e.target;
-    target.style.height = 'auto';
-    target.style.height = target.scrollHeight + 2 + 'px'
+</script>
+
+<script>
+function SetHeight(element) {
+    element.style.height = 'auto';
+    element.style.height = element.scrollHeight + 2 + 'px'
 }
-onMounted(() => SetHeight({target:autoHeight.value}))
+export const vAutoHeight = {
+    created(el) {
+        el.addEventListener('input', () => SetHeight(el))
+    },
+    updated(el) {
+        SetHeight(el)
+    },
+    mounted(el) {
+        SetHeight(el)
+    },
+    console(){
+        console.log('test')
+    }
+}
 </script>
