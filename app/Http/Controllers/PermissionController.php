@@ -28,16 +28,10 @@ class PermissionController extends Controller
         });
 
         collect($request->users)->each(function ($userData) use ($page,$permissions) {
-            $user = User::find($userData['id']) ?? new User();
-
+            $user = User::find($userData['id']);
             $user->revokePermissionTo($permissions);
-
-            $permissions = [];
-            collect($userData['permissions'])->each(function ($permission) use (&$permissions, $page) {
-                $permissions[] = "pages.{$permission}.{$page->id}";
-            });
+            $permissions = collect($userData['permissions'])->reduce(fn ($permissions, $permission) => array_merge($permissions, ["pages.{$permission}.{$page->id}"]), []);
             $user->givePermissionTo($permissions);
-
         });
 
         return response()->json(['success' => true]);
