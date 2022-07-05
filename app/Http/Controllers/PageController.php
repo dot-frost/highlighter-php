@@ -79,6 +79,7 @@ class PageController extends Controller
     public function show(Book $book, $page)
     {
         $page = $book->pages()->where('number', $page)->firstOrFail();
+        $this->authorize('pages.read', $page);
         return Inertia::render('Pages/Show')->with([
             'book' => BookResource::make($book),
             'next' => $page->next?PageResource::make($page->next):null,
@@ -90,7 +91,6 @@ class PageController extends Controller
     public function destroy(Book $book, Page $page)
     {
         $page->delete();
-
         return redirect()->route('books.pages.index', $page->book)->with([
             'alert' => [
                 'type' => 'success',
@@ -99,8 +99,9 @@ class PageController extends Controller
         ]);
     }
 
-    public function update(Request $request, Book $book, Page $page)
+    public function update(Request $request, $book, Page $page)
     {
+        $this->authorize('pages.update', $page);
         $validated = $request->validate([
             'highlights' => ['nullable', 'json'],
             'image' => ['nullable','image']
@@ -144,6 +145,7 @@ class PageController extends Controller
      */
     public function lastText(Request $request, Book $book, Page $page)
     {
+        $this->authorize('pages.update', $page);
         $validator = validator($request->all(), [
             'highlights' => ['required', 'json'],
             'text' => ['nullable', 'string'],
@@ -171,6 +173,7 @@ class PageController extends Controller
     }
 
     public function setStatus($book, Page $page, Request $request){
+        $this->authorize('pages.update', $page);
         $request->validate([
            'status' => ['required', Rule::in([
                Page::STATUS_INITIAL,
