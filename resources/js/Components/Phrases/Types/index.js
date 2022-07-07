@@ -221,10 +221,20 @@ const noun = {
     }),
     plural: new InputField('Plural').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
         const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .form.inflected_forms.type-infl > .type-gram `)
-        if (pos.length === 0) throw new Error('No pos found')
-        let plural = Array.from(pos).find(p => p.textContent.trim() === 'plural')
-        if (!plural) throw new Error('No plural found')
-        return plural.previousElementSibling.textContent.trim()
+        let pluralWord = null
+        if (pos.length) {
+            let plural = Array.from(pos).find(p => p.textContent.trim() === 'plural')
+            if (plural) pluralWord = plural.previousElementSibling.textContent.trim()
+        }
+        if (!pluralWord) {
+            const cases = getCase(word, url, word, mainContent)
+            pluralWord = cases.genitive[1]
+            pluralWord = pluralWord && pluralWord !== '-'? pluralWord : null
+        }
+        return {
+            word: getNameWord(word, mainContent),
+            value : pluralWord,
+        }
     }),
     genitive: new InputField('Genitive').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
         const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .form.inflected_forms.type-infl > .type-gram `)
