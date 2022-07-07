@@ -183,7 +183,21 @@ class CaseField extends Field {
         }
     }
 }
-
+function getCase(caseKey, url, word, mainContent) {
+    const tableRows = mainContent.querySelectorAll(`#${word}__1 > .content.definitions.dictionary.biling > .short_noun_table.decl > .table > .tr`)
+    if (tableRows.length === 0) throw new Error('No table found')
+    if (!tableRows[0].textContent.trim().toLowerCase().startsWith('case')) throw new Error('No case found')
+    let cases = {}
+    Array.from(tableRows).slice(1).forEach(row => {
+        let caseName = row.childNodes[0].textContent.trim().toLowerCase()
+        Array.from(row.childNodes).slice(1).forEach(c => {
+            if (!cases[caseName]) cases[caseName] = []
+            cases[caseName].push(c.textContent.trim().split().slice(1).join(' '))
+        })
+    })
+    if (cases.length === 0) throw new Error('No cases found')
+    return cases
+}
 const noun = {
     gender: new InputField('Gender').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
         const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .gramGrp > .pos`)
