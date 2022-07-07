@@ -238,10 +238,20 @@ const noun = {
     }),
     genitive: new InputField('Genitive').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
         const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .form.inflected_forms.type-infl > .type-gram `)
-        if (pos.length === 0) throw new Error('No pos found')
-        let plural = Array.from(pos).find(p => p.textContent.trim() === 'genitive')
-        if (!plural) throw new Error('No genitive found')
-        return plural.previousElementSibling.textContent.trim()
+        let genitiveWord = null
+        if (pos.length) {
+            let genitive = Array.from(pos).find(p => p.textContent.trim() === 'genitive')
+            if (genitive) genitiveWord = genitive.previousElementSibling.textContent.trim()
+        }
+        if (!genitiveWord) {
+            const cases = getCase(word, url, word, mainContent)
+            genitiveWord = cases.genitive[0]
+            genitiveWord = genitiveWord && genitiveWord !== '-'? genitiveWord : null
+        }
+        return {
+            word: getNameWord(word, mainContent),
+            value : genitiveWord
+        }
     }),
     case: new CaseField('Case', ['AKK', 'DAT', 'GEN']).setIsMultiple(true),
     description: new TextareaField('Description').setIsMultiple(true),
