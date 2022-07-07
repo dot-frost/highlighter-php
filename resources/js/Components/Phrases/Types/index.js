@@ -198,6 +198,9 @@ function getCase(caseKey, url, word, mainContent) {
     if (cases.length === 0) throw new Error('No cases found')
     return cases
 }
+function getNameWord(word, mainContent) {
+    return mainContent.querySelector(`#${word}__1`).dataset.typeBlock.split('').map((l,i) => i === 0 ? l.toUpperCase(): l.toLowerCase()).join('')
+}
 const noun = {
     gender: new InputField('Gender').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
         const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .gramGrp > .pos`)
