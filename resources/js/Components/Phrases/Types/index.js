@@ -329,7 +329,10 @@ const verb = {
         let wir = Array.from(presentPerfect.querySelectorAll('span.infl')).find(c => c.firstChild.textContent.toLowerCase().trim() === 'wir')
         if (!wir) throw new Error('No wir found')
         wir.removeChild(wir.firstChild)
-        return wir.textContent.toLowerCase().trim()
+        return {
+            word: getNameWord(word, mainContent).toLowerCase(),
+            value: wir.textContent.toLowerCase().trim().split(' ').slice(1).join(' ')
+        }
     }),
     auxiliaryVerb: new SelectField('Auxiliary Verb', ['', 'haben', 'sein']).setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
         let verbTable = await getVerbConjugation(url, word, mainContent)
