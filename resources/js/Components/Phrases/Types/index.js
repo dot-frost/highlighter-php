@@ -202,12 +202,22 @@ function getNameWord(word, mainContent) {
     return mainContent.querySelector(`#${word}__1`).dataset.typeBlock.split('').map((l,i) => i === 0 ? l.toUpperCase(): l.toLowerCase()).join('')
 }
 const noun = {
-    gender: new InputField('Gender').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
+    gender: new SelectField('Gender', ['', 'das', 'die', 'der', 'die (Pl.)']).setIsRequired(true).setFillCallback((url, word, mainContent)=> {
         const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .gramGrp > .pos`)
         if (pos.length === 0) throw new Error('No pos found')
-        let gen = Array.from(pos).map(p => p.textContent.trim().toLowerCase()).find(p => p.endsWith('noun'))
+        let gen = Array.from(pos).map(p => p.textContent.trim().toLowerCase()).find(p => p.endsWith('noun') || p === 'plural')
         if (!gen) throw new Error('No gen found')
-        return gen.split(' ').shift()
+        gen = gen.split(' ').shift().toLowerCase()
+        let gender = {
+            'masculine': 'der',
+            'feminine': 'die',
+            'neuter': 'das',
+            'plural': 'die (Pl.)',
+        }[gen]
+        return {
+            word: getNameWord(word, mainContent),
+            value: gender
+        }
     }),
     plural: new InputField('Plural').setIsRequired(true).setFillCallback((url, word, mainContent)=> {
         const pos = mainContent.querySelectorAll(`#${word}__1 > .definitions > .hom > .form.inflected_forms.type-infl > .type-gram `)
