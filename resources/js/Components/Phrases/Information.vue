@@ -98,10 +98,21 @@ export default {
         allTypes: () => Object.keys(types).map(t => t[0].toUpperCase() + t.slice(1)),
     },
     methods: {
+        setPhrase(phrase) {
+            this.$emit('update:phrase', phrase)
+        },
         fill(collect, set) {
             if (this.source) {
                 let res = collect(this.source)
-                return (res instanceof Promise) ? res.then(set) : set(res)
+                const fill = (rs)=>{
+                    if (rs instanceof Object && 'word' in rs && 'word' in rs) {
+                        this.setPhrase(rs.word)
+                        set(rs.value)
+                    }else {
+                        set(rs)
+                    }
+                }
+                return (res instanceof Promise)? res.then(fill): fill(res)
             }
             let url = 'https://www.collinsdictionary.com/dictionary/german-english/' + this.phrase.toLowerCase()
             fetch(url, {mode: 'cors'})
