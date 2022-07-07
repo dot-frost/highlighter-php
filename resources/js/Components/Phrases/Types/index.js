@@ -279,7 +279,7 @@ const getVerbConjugation = async (url, word, mainContent) => {
     return (new DOMParser).parseFromString( window.verbTable, 'text/html')
 }
 const verb = {
-    regular: new SelectField('Regular', ['Regular', 'Irregular']).setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
+    regular: new SelectField('Regular', ['', 'Regular', 'Irregular']).setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
         let verbTable = await getVerbConjugation(url, word, mainContent)
         word = mainContent.querySelector(`#${word}__1`).dataset.typeBlock
         let conjugations = verbTable.querySelectorAll('.short_verb_table > .conjugation ')
@@ -308,7 +308,7 @@ const verb = {
         }
         return 'Irregular'
     }),
-    reflective: new SelectField('Reflective', ['Reflective', 'Non-Reflective']).setIsRequired(true),
+    reflective: new SelectField('Reflective', ['', 'Reflective', 'Non-Reflective']).setIsRequired(true),
     past: new InputField('Past').setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
         let verbTable = await getVerbConjugation(url, word, mainContent)
         let conjugations = verbTable.querySelectorAll('.short_verb_table > .conjugation ')
@@ -331,7 +331,7 @@ const verb = {
         wir.removeChild(wir.firstChild)
         return wir.textContent.toLowerCase().trim()
     }),
-    auxiliaryVerb: new SelectField('Auxiliary Verb', ['haben', 'sein']).setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
+    auxiliaryVerb: new SelectField('Auxiliary Verb', ['', 'haben', 'sein']).setIsRequired(true).setFillCallback(async (url, word, mainContent)=> {
         let verbTable = await getVerbConjugation(url, word, mainContent)
         let conjugations = verbTable.querySelectorAll('.short_verb_table > .conjugation ')
         if (!conjugations) throw new Error('No conjugations found')
